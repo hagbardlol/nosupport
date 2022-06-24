@@ -24,7 +24,7 @@ local format = string.format
 
 local SDK = _G.CoreEx
 
-SDK.AutoUpdate("https://raw.githubusercontent.com/hagbardlol/nosupport/raw/main/OriKatarina.lua", SCRIPT_VERSION_UPDATER)
+SDK.AutoUpdate("https://raw.githubusercontent.com/hagbardlol/nosupport/main/OriKatarina.lua", SCRIPT_VERSION_UPDATER)
 
 local ObjManager = SDK.ObjectManager
 local EventManager = SDK.EventManager
