@@ -1,7 +1,7 @@
 if Player.CharName ~= "Yasuo" then return end
 
 local SCRIPT_NAME = "Ori Yasuo"
-local SCRIPT_VERSION_UPDATER = "2.2.2"
+local SCRIPT_VERSION_UPDATER = "2.2.3"
 local SCRIPT_VERSION = SCRIPT_VERSION_UPDATER
 local SCRIPT_LAST_UPDATED = "8/31/2021"
 local SCRIPT_AUTHOR = "Orietto"
@@ -23,7 +23,7 @@ local huge, pow, min, max = math.huge, math.pow, math.min, math.max
 
 local SDK = _G.CoreEx
 
-SDK.AutoUpdate("https://github.com/hagbardlol/nosupport/raw/main/OriYasuo.lua", SCRIPT_VERSION_UPDATER)
+SDK.AutoUpdate("https://raw.githubusercontent.com/hagbardlol/nosupport/main/OriYasuo.lua", SCRIPT_VERSION_UPDATER)
 
 local ObjManager = SDK.ObjectManager
 local EventManager = SDK.EventManager

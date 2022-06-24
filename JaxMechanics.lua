@@ -13,8 +13,8 @@
 if _G.CoreEx.ObjectManager.Player.CharName ~= "Jax" then
     return
 end
-local ScriptName, Version = "JaxMechanics", "1.0.2"
-_G.CoreEx.AutoUpdate("https://github.com/hagbardlol/nosupport/raw/main/" .. ScriptName ..".lua", Version)
+local ScriptName, Version = "JaxMechanics", "1.0.3"
+_G.CoreEx.AutoUpdate("https://raw.githubusercontent.com/hagbardlol/nosupport/main/" .. ScriptName ..".lua", Version)
 
 local SDK = _G.CoreEx
 local Lib = _G.Libs

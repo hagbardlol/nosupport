@@ -1,7 +1,7 @@
 if Player.CharName ~= "Katarina" then return end
 
 local SCRIPT_NAME = "Ori Katarina"
-local SCRIPT_VERSION_UPDATER = "1.0.3"
+local SCRIPT_VERSION_UPDATER = "1.0.4"
 local SCRIPT_VERSION = SCRIPT_VERSION_UPDATER
 local SCRIPT_LAST_UPDATED = "11/28/2021"
 local SCRIPT_AUTHOR = "Orietto"
@@ -24,7 +24,7 @@ local format = string.format
 
 local SDK = _G.CoreEx
 
-SDK.AutoUpdate("https://github.com/hagbardlol/nosupport/raw/main/OriKatarina.lua", SCRIPT_VERSION_UPDATER)
+SDK.AutoUpdate("https://raw.githubusercontent.com/hagbardlol/nosupport/raw/main/OriKatarina.lua", SCRIPT_VERSION_UPDATER)
 
 local ObjManager = SDK.ObjectManager
 local EventManager = SDK.EventManager

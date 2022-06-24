@@ -1,8 +1,8 @@
 if _G.CoreEx.ObjectManager.Player.CharName ~= "Tristana" then
     return
 end
-local ScriptName, Version = "TristanaMechanics", "1.0.5"
-_G.CoreEx.AutoUpdate("https://github.com/hagbardlol/nosupport/raw/main/" .. ScriptName ..".lua", Version)
+local ScriptName, Version = "TristanaMechanics", "1.0.6"
+_G.CoreEx.AutoUpdate("https://raw.githubusercontent.com/hagbardlol/nosupport/main/" .. ScriptName ..".lua", Version)
 
 local SDK = _G.CoreEx
 local Lib = _G.Libs

@@ -1,8 +1,8 @@
 if _G.CoreEx.ObjectManager.Player.CharName ~= "Urgot" then
     return
 end
-local ScriptName, Version = "UrgotMechanics", "1.0.2"
-_G.CoreEx.AutoUpdate("https://github.com/hagbardlol/nosupport/raw/main/" .. ScriptName ..".lua", Version)
+local ScriptName, Version = "UrgotMechanics", "1.0.3"
+_G.CoreEx.AutoUpdate("https://raw.githubusercontent.com/hagbardlol/nosupport/main/" .. ScriptName ..".lua", Version)
 
 local OsClock = os.clock
 local SDK = _G.CoreEx

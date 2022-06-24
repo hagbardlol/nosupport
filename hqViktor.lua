@@ -14,8 +14,8 @@ if _G.Player.CharName ~= "Viktor" then return false end
 local SCRIPT = {
   NAME = "hqViktor",
   AUTHOR = "hq.af",
-  VERSION = "1.0.4",
-  UPDATE_URL = "https://github.com/hagbardlol/nosupport/raw/main/hqViktor.lua",
+  VERSION = "1.0.5",
+  UPDATE_URL = "https://raw.githubusercontent.com/hagbardlol/nosupport/main/hqViktor.lua",
   CHANGELOG = "Auto Harass disable under turret option"
 }
 

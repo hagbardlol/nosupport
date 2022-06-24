@@ -5,7 +5,7 @@ end
 module("PewPewTristana", package.seeall, log.setup)
 clean.module("PewPewTristana", clean.seeall, log.setup)
 
-_G.CoreEx.AutoUpdate("https://github.com/hagbardlol/nosupport/raw/main/PewPewTristana.lua", "1.0.4")
+_G.CoreEx.AutoUpdate("https://raw.githubusercontent.com/hagbardlol/nosupport/main/PewPewTristana.lua", "1.0.5")
 
 local API = {
     Game = _G.CoreEx.Game,

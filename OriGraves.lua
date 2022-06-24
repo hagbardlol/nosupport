@@ -1,7 +1,7 @@
 if Player.CharName ~= "Graves" then return end
 
 local SCRIPT_NAME = "Ori Graves"
-local SCRIPT_VERSION_UPDATER = "1.0.3"
+local SCRIPT_VERSION_UPDATER = "1.0.4"
 local SCRIPT_VERSION = SCRIPT_VERSION_UPDATER
 local SCRIPT_LAST_UPDATED = "8/18/2021"
 local SCRIPT_AUTHOR = "Orietto"
@@ -23,7 +23,7 @@ local huge, pow, min, max = math.huge, math.pow, math.min, math.max
 
 local SDK = _G.CoreEx
 
-SDK.AutoUpdate("https://github.com/hagbardlol/nosupport/raw/main/OriGraves.lua", SCRIPT_VERSION_UPDATER)
+SDK.AutoUpdate("https://raw.githubusercontent.com/hagbardlol/nosupport/main/OriGraves.lua", SCRIPT_VERSION_UPDATER)
 
 local ObjManager = SDK.ObjectManager
 local EventManager = SDK.EventManager

@@ -1,7 +1,7 @@
 if Player.CharName ~= "Akali" then return end
 
 local SCRIPT_NAME = "Ori Akali"
-local SCRIPT_VERSION_UPDATER = "1.0.2"
+local SCRIPT_VERSION_UPDATER = "1.0.3"
 local SCRIPT_VERSION = SCRIPT_VERSION_UPDATER
 local SCRIPT_LAST_UPDATED = "9/1/2021"
 local SCRIPT_AUTHOR = "Orietto"
@@ -23,7 +23,7 @@ local huge, pow, min, max, pi, ceil, floor, sin, cos = math.huge, math.pow, math
 
 local SDK = _G.CoreEx
 
-SDK.AutoUpdate("https://github.com/hagbardlol/nosupport/raw/main/OriAkali.lua", SCRIPT_VERSION_UPDATER)
+SDK.AutoUpdate("https://raw.githubusercontent.com/hagbardlol/nosupport/main/OriAkali.lua", SCRIPT_VERSION_UPDATER)
 
 local ObjManager = SDK.ObjectManager
 local EventManager = SDK.EventManager

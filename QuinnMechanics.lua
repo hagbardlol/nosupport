@@ -6,8 +6,8 @@ ________        .__                   _____                .__                  
 \_____\ \_/____/|__|___|  /___|  / \____|__  /\___  >\___  >___|  (____  /___|  /__|\___  >____  >
        \__>             \/     \/          \/     \/     \/     \/     \/     \/        \/     \/ 
 ]]
-local ScriptName, Version = "QuinnMechanics", "1.0.2"
-_G.CoreEx.AutoUpdate("https://github.com/hagbardlol/nosupport/raw/main/" .. ScriptName ..".lua", Version)
+local ScriptName, Version = "QuinnMechanics", "1.0.3"
+_G.CoreEx.AutoUpdate("https://raw.githubusercontent.com/hagbardlol/nosupport/main/" .. ScriptName ..".lua", Version)
 
 local SDK = _G.CoreEx
 local Lib = _G.Libs

@@ -16,8 +16,8 @@
 if _G.CoreEx.ObjectManager.Player.CharName ~= "Sylas" then
     return
 end
-local ScriptName, Version = "SylasMechanics", "1.0.2"
-_G.CoreEx.AutoUpdate("https://github.com/hagbardlol/nosupport/raw/main/" .. ScriptName ..".lua", Version)
+local ScriptName, Version = "SylasMechanics", "1.0.3"
+_G.CoreEx.AutoUpdate("https://raw.githubusercontent.com/hagbardlol/nosupport/main/" .. ScriptName ..".lua", Version)
 
 local SDK = _G.CoreEx
 local Lib = _G.Libs
