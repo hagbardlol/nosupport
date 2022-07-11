@@ -1,7 +1,7 @@
 if Player.CharName ~= "Akali" then return end
 
 local SCRIPT_NAME = "Ori Akali"
-local SCRIPT_VERSION_UPDATER = "1.0.3"
+local SCRIPT_VERSION_UPDATER = "1.0.4"
 local SCRIPT_VERSION = SCRIPT_VERSION_UPDATER
 local SCRIPT_LAST_UPDATED = "9/1/2021"
 local SCRIPT_AUTHOR = "Orietto"
@@ -1007,7 +1007,7 @@ function fightModes.Combo(lagFree)
         enemiesAsHeroes[#enemiesAsHeroes+1] = obj.AsHero
     end
 
-    local sortedEnemies = TS:SortTargetsForMode(enemiesAsHeroes, "Smart")
+    local sortedEnemies = TS:SortTargetsForMode(enemiesAsHeroes, "SetnaBest TM")
     
     --SmartKillCombo first
     for _, hero in ipairs(sortedEnemies) do
