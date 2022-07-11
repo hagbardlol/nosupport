@@ -1,7 +1,7 @@
 if Player.CharName ~= "Katarina" then return end
 
 local SCRIPT_NAME = "Ori Katarina"
-local SCRIPT_VERSION_UPDATER = "1.0.4"
+local SCRIPT_VERSION_UPDATER = "1.0.5"
 local SCRIPT_VERSION = SCRIPT_VERSION_UPDATER
 local SCRIPT_LAST_UPDATED = "11/28/2021"
 local SCRIPT_AUTHOR = "Orietto"
@@ -1227,7 +1227,7 @@ function fightModes.Killsteal()
             enemiesAsHeroes[#enemiesAsHeroes+1] = obj.AsHero
         end
     
-        local sortedEnemies = TS:SortTargetsForMode(enemiesAsHeroes, "Smart")
+        local sortedEnemies = TS:SortTargetsForMode(enemiesAsHeroes, "SetnaBest TM")
     
         local isUlting = Katarina.MiscData.IsUlting
         local myPos = Player.ServerPos
