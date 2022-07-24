@@ -1,7 +1,7 @@
 if _G.CoreEx.ObjectManager.Player.CharName ~= "Urgot" then
     return
 end
-local ScriptName, Version = "UrgotMechanics", "1.0.3"
+local ScriptName, Version = "UrgotMechanics", "1.0.4"
 _G.CoreEx.AutoUpdate("https://raw.githubusercontent.com/hagbardlol/nosupport/main/" .. ScriptName ..".lua", Version)
 
 local OsClock = os.clock
@@ -388,16 +388,14 @@ function BaseStrucutre:Menu()
             Menu.Checkbox("Combo.CastSmite", "Use Smite", true)
         end)
         Menu.NewTree("Harass", "Harass Options", function()
-            Menu.ColoredText("Mana Percent limit", 0xFFD700FF, true)
-            Menu.Slider("Harass.ManaSlider", "", 70, 0, 100)
+            Menu.Slider("Harass.ManaSlider", "Mana Percent limit", 70, 0, 100)
             Menu.Checkbox("Harass.CastQ", "Use Q", true)
             Menu.Checkbox("Harass.CastW", "Use W", true)
             Menu.Checkbox("Harass.CastWAutoCast", "Use W -> AA Mechanic", true)
             Menu.Checkbox("Harass.CastE", "Use E", true)
         end)
         Menu.NewTree("Lasthit", "LastHit Options", function()
-            Menu.ColoredText("Mana Percent limit", 0xFFD700FF, true)
-            Menu.Slider("Lasthit.ManaSlider", "", 50, 0, 100)
+            Menu.Slider("Lasthit.ManaSlider", "Mana Percent limit", 50, 0, 100)
             Menu.Checkbox("Lasthit.CastQ", "Use Q", true)
             Menu.Checkbox("Lasthit.CastW", "Use W", true)
         end)
@@ -422,8 +420,8 @@ function BaseStrucutre:Menu()
             end
         end)
         Menu.NewTree("Draw", "Drawing Options", function()
-            Menu.Checkbox("Drawing.Damage", "Draw Possible DMG", false)
-            Menu.Checkbox("Drawing.Q.Enabled", "Draw Q Range", false)
+            Menu.Checkbox("Drawing.Damage", "Draw Possible DMG", true)
+            Menu.Checkbox("Drawing.Q.Enabled", "Draw Q Range", true)
             Menu.Checkbox("Drawing.W.Enabled", "Draw W Range", false)
             Menu.Checkbox("Drawing.E.Enabled", "Draw E Range", false)
             Menu.Checkbox("Drawing.R.Enabled", "Draw R Range", false)
