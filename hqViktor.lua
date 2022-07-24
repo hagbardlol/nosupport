@@ -348,7 +348,7 @@ function Viktor.RActive()
 end
 
 function Viktor.HasQBuff()
-  return API.Player.Buffs["Viktorpowertransfer"] ~= nil
+  return API.Player.Buffs["viktorpowertransfer"] ~= nil
 end
 
 function Viktor.RDamage(target, ticks)
