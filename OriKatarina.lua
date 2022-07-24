@@ -1,7 +1,7 @@
 if Player.CharName ~= "Katarina" then return end
 
 local SCRIPT_NAME = "Ori Katarina"
-local SCRIPT_VERSION_UPDATER = "1.0.5"
+local SCRIPT_VERSION_UPDATER = "1.0.6"
 local SCRIPT_VERSION = SCRIPT_VERSION_UPDATER
 local SCRIPT_LAST_UPDATED = "11/28/2021"
 local SCRIPT_AUTHOR = "Orietto"
@@ -542,8 +542,6 @@ function OriUtils.AddDrawMenu(data)
             Menu.ColorPicker(cacheName .. ".draw." .. id .. ".color", "Color", SCRIPT_COLOR)
         end)
     end
-
-    Menu.Separator()
 
     Menu.Checkbox(cacheName .. ".draw." .. "comboDamage", "Draw combo damage on healthbar", false)
 end
@@ -1227,7 +1225,7 @@ function fightModes.Killsteal()
             enemiesAsHeroes[#enemiesAsHeroes+1] = obj.AsHero
         end
     
-        local sortedEnemies = TS:SortTargetsForMode(enemiesAsHeroes, "SetnaBest TM")
+        local sortedEnemies = TS:SortTargetsForMode(enemiesAsHeroes, "DreamBest TM")
     
         local isUlting = Katarina.MiscData.IsUlting
         local myPos = Player.ServerPos
@@ -1796,38 +1794,46 @@ end
 
 function Katarina.InitMenu()
     local function QHeader()
-        Menu.ColoredText(drawData[1].displayText, SCRIPT_COLOR, true)
+        Menu.Separator(drawData[1].displayText, SCRIPT_COLOR, true)
     end
 
     local function WHeader()
-        Menu.ColoredText(drawData[2].displayText, SCRIPT_COLOR, true)
+        Menu.Separator(drawData[2].displayText, SCRIPT_COLOR, true)
     end
 
     local function EHeader()
-        Menu.ColoredText(drawData[3].displayText, SCRIPT_COLOR, true)
+        Menu.Separator(drawData[3].displayText, SCRIPT_COLOR, true)
     end
 
     local function RHeader()
-        Menu.ColoredText(drawData[4].displayText, SCRIPT_COLOR, true)
+        Menu.Separator(drawData[4].displayText, SCRIPT_COLOR, true)
     end
 
     local function KatarinaMenu()
-        Menu.Text("Version: " .. SCRIPT_VERSION, true)
-        Menu.Text("Last Updated: " .. SCRIPT_LAST_UPDATED, true)
-        if SCRIPT_IS_BETA then
-            Menu.ColoredText("This is a beta, if you find any issues, report them to " .. SCRIPT_AUTHOR, 0xFFFF00FF, true)
-        end
+        Menu.NewTree("Katarina.drawMenu", "Draw Settings", function()
+            OriUtils.AddDrawMenu(drawData)
 
+            Menu.Checkbox("Katarina.draw.smartKSRState", "Print Smart KS R state", true)
+            Menu.Checkbox("Katarina.draw.rCalcsState", "Print R Calculations mode state", true)
+
+            Menu.Checkbox("Katarina.draw.daggers", "Draw daggers indicators", true)
+            Menu.ColorPicker("Katarina.draw.daggers.color", "Daggers color", SCRIPT_COLOR)
+
+            Menu.Checkbox("Katarina.draw.daggersDuration", "Draw daggers duration", true)
+            Menu.ColorPicker("Katarina.draw.daggersDuration.color", "Daggers duration circle color", SCRIPT_COLOR)
+        end)
         Menu.NewTree("Katarina.globalMenu", "Global Settings", function()
             --Menu.Dropdown("Katarina.global.rDaggersMode", "R Damage Calculations", 0, {"Static", "Dynamic"})
             Menu.Keybind("Katarina.global.rDaggersMode", "R Damage Calcs: Static/Dynamic", string.byte("Z"), true, false)
 
             Menu.Indent(function()
-                Menu.Slider("Katarina.global.rDaggers", "Static: R Daggers to consider in calculations", 15, 1, 15, 1)
-                Menu.ColoredText("Dynamic mode only considers the daggers that would hit the enemy if this started moving away from Katarina at their current speed", 0x00FFFFFF)
+                Menu.Slider("Katarina.global.rDaggers", "Static: R Daggers to consider in calcs", 15, 1, 15, 1)
+                Menu.ColoredText("Dynamic mode only considers the daggers", 0x00FFFFFF)
+                Menu.ColoredText("that would hit the enemy if this started", 0x00FFFFFF)
+                Menu.ColoredText("moving away from Kata at their current speed", 0x00FFFFFF)
                 --[[
                     if rCalculationsMode == 0 then 
-                        Menu.Slider("Katarina.global.rDaggers", "R Daggers to consider in calculations", 15, 1, 15, 1)
+                        Menu.Slider("Katarina.global.rDaggers", "R Daggers to consider in calcs", 15, 1, 15, 1)
                     elseif rCalculationsMode == 1 then
                         Menu.ColoredText("Dynamic mode only considers the daggers that would hit the enemy if this started moving away from Katarina at their current speed", 0x00FFFFFF)
                     end
@@ -1850,11 +1856,9 @@ function Katarina.InitMenu()
                 Menu.Checkbox("Katarina.combo.useW", "Enable W", true)
                 Menu.Indent(function()
                     Menu.Checkbox("Katarina.combo.useW.near", "If enemy is near you", true)
-                    Menu.Checkbox("Katarina.combo.useW.chase", "If enemy is running away from you", false)
+                    Menu.Checkbox("Katarina.combo.useW.chase", "If enemy is running away from you", true)
                 end)
             end)
-
-            Menu.Separator()
 
             Menu.ColumnLayout("Katarina.comboMenu.ER", "Katarina.comboMenu.ER", 2, true, function()
                 EHeader()
@@ -1863,7 +1867,7 @@ function Katarina.InitMenu()
                 Menu.Indent(function()
                     Menu.Checkbox("Katarina.combo.useE.dagger", "To Dagger", true)
                     --Menu.Keybind("Katarina.combo.useE.champion", "To Champion: Off/On", string.byte("Z"), true, false, true)
-                    Menu.Checkbox("Katarina.combo.useE.champion", "To Champion", false)
+                    Menu.Checkbox("Katarina.combo.useE.champion", "To Champion", true)
                 end)
 
                 Menu.NextColumn()
@@ -1891,13 +1895,9 @@ function Katarina.InitMenu()
         Menu.NewTree("Katarina.clearMenu", "Clear Settings", function()
             Menu.Checkbox("Katarina.clear.enemyAround", "Clear even if enemies around", false)
 
-            Menu.Separator()
-
             QHeader()
 
             Menu.Checkbox("Katarina.clear.useQ", "Enable Q", true)
-
-            Menu.Separator()
 
             WHeader()
 
@@ -1905,8 +1905,6 @@ function Katarina.InitMenu()
             Menu.Indent(function()
                 Menu.Slider("Katarina.clear.useW.minHit", "Min hit", 3, 1, 5, 1)
             end)
-
-            Menu.Separator()
 
             EHeader()
 
@@ -1918,14 +1916,10 @@ function Katarina.InitMenu()
 
         Menu.NewTree("Katarina.lhMenu", "Last hit Settings", function()
             Menu.Checkbox("Katarina.lh.enemyAround", "Last hit even if enemies around", false)
-
-            Menu.Separator()
             
             QHeader()
 
             Menu.Checkbox("Katarina.lh.useQ", "Enable Q", true)
-
-            Menu.Separator()
 
             EHeader()
 
@@ -1936,8 +1930,6 @@ function Katarina.InitMenu()
             WHeader()
 
             Menu.Checkbox("Katarina.flee.useW", "Enable W to flee", true)
-
-            Menu.Separator()
 
             EHeader()
 
@@ -1970,26 +1962,7 @@ function Katarina.InitMenu()
             end)
         end)
 
-        Menu.NewTree("Katarina.drawMenu", "Draw Settings", function()
-            OriUtils.AddDrawMenu(drawData)
-
-            Menu.Separator()
-
-            Menu.Checkbox("Katarina.draw.smartKSRState", "Print Smart KS R state", true)
-            Menu.Checkbox("Katarina.draw.rCalcsState", "Print R Calculations mode state", true)
-
-            Menu.Separator()
-
-            Menu.Checkbox("Katarina.draw.daggers", "Draw daggers indicators", false)
-            Menu.ColorPicker("Katarina.draw.daggers.color", "Daggers color", SCRIPT_COLOR)
-
-            Menu.Separator()
-
-            Menu.Checkbox("Katarina.draw.daggersDuration", "Draw daggers duration", false)
-            Menu.ColorPicker("Katarina.draw.daggersDuration.color", "Daggers duration circle color", SCRIPT_COLOR)
-        end)
-
-        Menu.Text("Author: " .. SCRIPT_AUTHOR, true)
+        Menu.Separator("Author: Orietto")
     end
 
     Menu.RegisterMenu(SCRIPT_NAME, SCRIPT_NAME, KatarinaMenu)
