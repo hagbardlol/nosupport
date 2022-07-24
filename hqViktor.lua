@@ -14,7 +14,7 @@ if _G.Player.CharName ~= "Viktor" then return false end
 local SCRIPT = {
   NAME = "hqViktor",
   AUTHOR = "hq.af",
-  VERSION = "1.0.5",
+  VERSION = "1.0.6",
   UPDATE_URL = "https://raw.githubusercontent.com/hagbardlol/nosupport/main/hqViktor.lua",
   CHANGELOG = "Auto Harass disable under turret option"
 }
@@ -348,7 +348,7 @@ function Viktor.RActive()
 end
 
 function Viktor.HasQBuff()
-  return API.Player.Buffs["viktorpowertransfer"] ~= nil
+  return API.Player.Buffs["Viktorpowertransfer"] ~= nil
 end
 
 function Viktor.RDamage(target, ticks)
@@ -844,7 +844,7 @@ function Config.Setup()
   
   m.RegisterMenu(SCRIPT.NAME, SCRIPT.NAME, function()
 
-    m.ColoredText(SCRIPT.NAME .. " v" .. SCRIPT.VERSION .. " by " .. SCRIPT.AUTHOR, 0xB65A94FF, true)
+    m.Separator(SCRIPT.NAME .. " v" .. SCRIPT.VERSION .. " by " .. SCRIPT.AUTHOR, 0xB65A94FF, true)
 
     m.NewTree("Combo", "Combo", function()
       m.Checkbox("ComboQ", "Use Q", true) -- OK
@@ -875,22 +875,21 @@ function Config.Setup()
           m.Checkbox("HarassE" .. charName, charName, true) -- OK
         end
       end)
-      m.ColoredText("Auto Harass", 0xB65A94FF, true)
+      m.Separator("Auto Harass", 0xB65A94FF, true)
       m.Keybind("AutoHarassToggle", "Auto Harass Toggle", string.byte('L'), true, false) -- OK
       m.Checkbox("AutoHarassWaitRune", "Auto Harass wait for rune (FirstStrike/Comet)", false) -- OK
       m.Checkbox("AutoHarassCheckTurret", "Auto Harass disabled under turret", true) -- OK
     end)
 
     m.NewTree("Farm", "Farm", function()
-      m.ColoredText("Global", 0xB65A94FF, true)
+      m.Separator("Global", 0xB65A94FF, true)
       m.Keybind("FarmSmartKey", "Quick E cast", string.byte('Z')) -- OK
       m.Slider("FarmMinManaPercent", "Min Mana % (Lane & Jungle)", 30, 0, 100, 1) -- OK
-      m.ColoredText("Lane", 0xB65A94FF, true)
-      m.Text("Use Q")
+      m.Separator("Lane", 0xB65A94FF, true)
       m.Dropdown("LaneQMode", "Use Q Mode", 0, Viktor.LaneQModes) -- OK
       m.Checkbox("LaneE", "Use E", false) -- OK
       m.Slider("LaneEMinHit", "Lane E Min hit", 3, 1, 8, 1) -- OK
-      m.ColoredText("Jungle", 0xB65A94FF, true)
+      m.Separator("Jungle", 0xB65A94FF, true)
       m.Checkbox("JungleQ", "Use Q", true) -- OK
       m.Checkbox("JungleE", "Use E", false) -- OK
     end)
@@ -920,7 +919,7 @@ function Config.Setup()
     end)
 
     m.NewTree("KS", "KS", function()
-      m.ColoredText("KS", 0xB65A94FF, true)
+      m.Separator("KS", 0xB65A94FF, true)
       
       m.Checkbox("KSQ", "KS Q", true) -- OK
       m.Checkbox("KSE", "KS E", true) -- OK
@@ -929,23 +928,21 @@ function Config.Setup()
 
     m.NewTree("Tuning", "Tuning (FPS & Advanced)", function()
       
-      m.ColoredText("FPS", 0xB65A94FF, true)
+      m.Separator("FPS", 0xB65A94FF, true)
       m.Slider("ExtendedAngleStep", "Extended E Angle Step", 0.1, 0.05, 3.3, 0.05) -- OK
       m.Text("^ lower is better but worst fps ^")
 
-      m.ColoredText("Spells", 0xB65A94FF, true)
+      m.Separator("Spells", 0xB65A94FF, true)
       m.Slider("EComboHitChanceSlider", "E Combo HitChance", 0.75, 0.1, 1, 0.01) -- OK
       m.Slider("EHarassHitChanceSlider", "E Harass HitChance", 0.9, 0.1, 1, 0.01) -- OK
       m.Slider("QRangePercent", "Q Range %", 100, 1, 125, 1) -- OK
       m.Slider("ERangePercent", "E Range %", 100, 1, 125, 1) -- OK
 
-      m.ColoredText("Mana", 0xB65A94FF, true)
+      m.Separator("Mana", 0xB65A94FF, true)
       m.Slider("MinManaW", "W Min Mana", 175, 0, 1000, 1) -- OK
     end)
 
     m.NewTree("Draw", "Draw", function()
-
-      m.ColoredText("Spells", 0xB65A94FF, true)
 
       m.Checkbox("DrawQ", "Draw Q Range", false) -- OK
       m.SameLine()
@@ -963,9 +960,7 @@ function Config.Setup()
       m.SameLine()
       m.ColorPicker("DrawRColor", "", 0xFFFFFFFFF) -- OK
 
-      m.ColoredText("Misc", 0xB65A94FF, true)
-
-      m.Checkbox("DrawPermashow", "Draw Auto Harass Status (PermaShow)", true) -- OK
+      m.Checkbox("DrawPermashow", "Draw Auto Harass Status (PermaShow)", false) -- OK
       
       m.Checkbox("DrawComboETarget", "Draw Combo E Target", true) -- OK
       m.SameLine()
@@ -973,8 +968,6 @@ function Config.Setup()
 
       m.Dropdown("DrawDamageMode", "Draw Damage Mode", 0, Viktor.DrawDamageModes) -- OK
     end)
-
-    m.ColoredText("~ owo ~", 0xB65A94FF, true)
 
   end)
 
