@@ -1007,7 +1007,7 @@ function fightModes.Combo(lagFree)
         enemiesAsHeroes[#enemiesAsHeroes+1] = obj.AsHero
     end
 
-    local sortedEnemies = TS:SortTargetsForMode(enemiesAsHeroes, "SetnaBest TM")
+    local sortedEnemies = TS:SortTargetsForMode(enemiesAsHeroes, "Lowest HP")
     
     --SmartKillCombo first
     for _, hero in ipairs(sortedEnemies) do
