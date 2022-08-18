@@ -1,9 +1,9 @@
 if Player.CharName ~= "Qiyana" then return end
 
 local SCRIPT_NAME = "Ori Qiyana"
-local SCRIPT_VERSION_UPDATER = "2.0.3"
+local SCRIPT_VERSION_UPDATER = "2.0.4"
 local SCRIPT_VERSION = SCRIPT_VERSION_UPDATER
-local SCRIPT_LAST_UPDATED = "9/12/2021"
+local SCRIPT_LAST_UPDATED = "08/18/2022"
 local SCRIPT_AUTHOR = "Orietto"
 local SCRIPT_IS_BETA = false
 
@@ -426,15 +426,13 @@ function OriUtils.AddDrawMenu(data)
         local id = element.id
         local displayText = element.displayText
 
-        Menu.Checkbox(cacheName .. ".draw." .. id, "Draw " .. displayText .. " range", false)
+        Menu.Checkbox(cacheName .. ".draw." .. id, "Draw " .. displayText .. " range", true)
         Menu.Indent(function()
             Menu.ColorPicker(cacheName .. ".draw." .. id .. ".color", "Color", SCRIPT_COLOR)
         end)
     end
 
-    Menu.Separator()
-
-    Menu.Checkbox(cacheName .. ".draw." .. "comboDamage", "Draw combo damage on healthbar", false)
+    Menu.Checkbox(cacheName .. ".draw." .. "comboDamage", "Draw combo damage on healthbar", true)
 end
 
 ---@param forcedTarget AIHeroClient
@@ -1805,28 +1803,22 @@ end
 
 function Qiyana.InitMenu()
     local function QHeader()
-        Menu.ColoredText(drawData[1].displayText, SCRIPT_COLOR, true)
+        Menu.Separator(drawData[1].displayText, SCRIPT_COLOR, true)
     end
 
     local function WHeader()
-        Menu.ColoredText(drawData[2].displayText, SCRIPT_COLOR, true)
+        Menu.Separator(drawData[2].displayText, SCRIPT_COLOR, true)
     end
 
     local function EHeader()
-        Menu.ColoredText(drawData[3].displayText, SCRIPT_COLOR, true)
+        Menu.Separator(drawData[3].displayText, SCRIPT_COLOR, true)
     end
 
     local function RHeader()
-        Menu.ColoredText(drawData[4].displayText, SCRIPT_COLOR, true)
+        Menu.Separator(drawData[4].displayText, SCRIPT_COLOR, true)
     end
 
     local function QiyanaMenu()
-        Menu.Text("Version: " .. SCRIPT_VERSION, true)
-        Menu.Text("Last Updated: " .. SCRIPT_LAST_UPDATED, true)
-        if SCRIPT_IS_BETA then
-            Menu.ColoredText("This is a beta, if you find any issues, report them to " .. SCRIPT_AUTHOR, 0xFFFF00FF, true)
-        end
-
         Menu.NewTree("Qiyana.comboMenu", "Combo Settings", function()
             Menu.Checkbox("Qiyana.combo.useProwler", "Use prowler items in combo", true)
             Menu.Checkbox("Qiyana.combo.brushPassive", "Don't AA or cast Q/E while stealthed", false)
@@ -1838,7 +1830,7 @@ function Qiyana.InitMenu()
                 Menu.Indent(function()
                     Menu.Keybind("Qiyana.combo.useQ.mode", "Toggle Q: After AA/Always", string.byte("Z"), true, false, true)
                     Menu.Indent(function()
-                        Menu.Checkbox("Qiyana.combo.useQ.mode.fallback", "Always use Q if target is outside AA range and E is not ready", true)
+                        Menu.Checkbox("Qiyana.combo.useQ.mode.fallback", "Always use Q if target is outside AA range\nand E is not ready", true)
                     end)
                 end)
 
@@ -1852,7 +1844,7 @@ function Qiyana.InitMenu()
                     if OriUtils.MGet("combo.useW.mode") == 0 then 
                         Menu.Indent(function()
                             --Menu.Checkbox("Qiyana.combo.useW.mode.waitQ", "Don't cast W if Q is ready in 1.25 seconds", false)
-                            Menu.Checkbox("Qiyana.combo.useW.forceW", "Force W if Q1 is ready but target is outside range", true)
+                            Menu.Checkbox("Qiyana.combo.useW.forceW", "Force W if Q1 is ready but target\nis outside range", false)
                         end)
                     end
                     Menu.Dropdown("Qiyana.combo.useW.dir", "Cast towards", 0, {"Mouse", "Target"})
@@ -1865,8 +1857,6 @@ function Qiyana.InitMenu()
                     end)
                 end)
             end)
-
-            Menu.Separator()
 
             Menu.ColumnLayout("Qiyana.comboMenu.ER", "Qiyana.comboMenu.ER", 2, true, function()
                 EHeader()
@@ -1884,14 +1874,21 @@ function Qiyana.InitMenu()
             end)
         end)
 
+        Menu.NewTree("Qiyana.drawMenu", "Draw Settings", function()
+            Menu.Separator("Draw Settings")
+            OriUtils.AddDrawMenu(drawData)
+
+            Menu.Checkbox("Qiyana.draw.QState", "Draw Toggle Q State", true)
+
+            Menu.Checkbox("Qiyana.draw.WDebug", "Draw W Analysis", false)
+        end)
+
         Menu.NewTree("Qiyana.harassMenu", "Harass Settings", function()
             Menu.Checkbox("Qiyana.harass.brushPassive", "Don't AA or cast Q/E while stealthed", true)
 
             QHeader()
 
             Menu.Checkbox("Qiyana.harass.useQ", "Enable Q", true)
-
-            Menu.Separator()
 
             WHeader()
 
@@ -1900,13 +1897,9 @@ function Qiyana.InitMenu()
                 Menu.Dropdown("Qiyana.harass.useW.mode", "Mode", 0, {"Combo Settings", "Always try to reset to Brush"})
             end)
 
-            Menu.Separator()
-
             EHeader()
 
             Menu.Checkbox("Qiyana.harass.useE", "Enable E", false)
-
-            Menu.Separator()
 
             Menu.Slider("Qiyana.harass.minMana", "Harass minimum mana %", 25, 0, 100, 1)
         end)
@@ -1916,16 +1909,12 @@ function Qiyana.InitMenu()
 
             Menu.Checkbox("Qiyana.clear.useQ", "Enable Q", true)
             Menu.Indent(function()
-                Menu.Slider("Qiyana.clear.useQ.minHit", "If it will hit X minions", 2, 1, 5, 1)
+                Menu.Slider("Qiyana.clear.useQ.minHit", "If it will hit X minions", 1, 1, 5, 1)
             end)
-
-            Menu.Separator()
 
             WHeader()
 
             Menu.Checkbox("Qiyana.clear.useW", "Enable W (Combo Settings)", false)
-
-            Menu.Separator()
 
             EHeader()
 
@@ -1933,8 +1922,6 @@ function Qiyana.InitMenu()
             Menu.Indent(function()
                 Menu.Checkbox("Qiyana.clear.useE.turret", "Allow under turret", false)
             end)
-
-            Menu.Separator()
 
             Menu.Checkbox("Qiyana.clear.enemyAround", "Clear even if enemy is around", false)
             Menu.Slider("Qiyana.clear.minMana", "Clear minimum mana %", 25, 0, 100, 1)
@@ -1948,16 +1935,12 @@ function Qiyana.InitMenu()
                 Menu.Slider("Qiyana.lh.useQ.minHit", "If it will kill X minions", 2, 1, 5, 1)
             end)
 
-            Menu.Separator()
-
             EHeader()
 
             Menu.Checkbox("Qiyana.lh.useE", "Enable E (If minion is outside AA range", true)
             Menu.Indent(function()
                 Menu.Checkbox("Qiyana.lh.useE.turret", "Allow under turret", false)
             end)
-
-            Menu.Separator()
 
             Menu.Checkbox("Qiyana.lh.enemyAround", "Last hit even if enemy is around", false)
             Menu.Slider("Qiyana.lh.minMana", "Last hit minimum mana %", 25, 0, 100, 1)
@@ -1967,8 +1950,6 @@ function Qiyana.InitMenu()
             WHeader()
 
             Menu.Checkbox("Qiyana.flee.useW", "Enable W", false)
-            
-            Menu.Separator()
 
             EHeader()
 
@@ -2008,22 +1989,13 @@ function Qiyana.InitMenu()
         end)
 
         Menu.NewTree("Qiyana.hcMenu", "Hitchance Settings", function()
-            Menu.Slider("Qiyana.hc.Q1", "Q1 Hitchance", 35, 0, 100, 1)
-            Menu.Slider("Qiyana.hc.Q2", "Q2 Hitchance", 35, 0, 100, 1)
+            Menu.Separator("Hitchance Settings")
+            Menu.Slider("Qiyana.hc.Q1", "Q1 Hitchance", 15, 0, 100, 1)
+            Menu.Slider("Qiyana.hc.Q2", "Q2 Hitchance", 15, 0, 100, 1)
             Menu.Slider("Qiyana.hc.R", "R Hitchance", 35, 0, 100, 1)
         end)
 
-        Menu.NewTree("Qiyana.drawMenu", "Draw Settings", function()
-            OriUtils.AddDrawMenu(drawData)
-
-            Menu.Separator()
-
-            Menu.Checkbox("Qiyana.draw.QState", "Draw Toggle Q State", true)
-
-            Menu.Checkbox("Qiyana.draw.WDebug", "Draw W Analysis", false)
-        end)
-
-        Menu.Text("Author: " .. SCRIPT_AUTHOR, true)
+        Menu.Separator("Author: Orietto")
     end
 
     Menu.RegisterMenu(SCRIPT_NAME, SCRIPT_NAME, QiyanaMenu)
