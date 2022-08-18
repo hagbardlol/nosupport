@@ -1,9 +1,9 @@
 if Player.CharName ~= "Graves" then return end
 
 local SCRIPT_NAME = "Ori Graves"
-local SCRIPT_VERSION_UPDATER = "1.0.4"
+local SCRIPT_VERSION_UPDATER = "1.0.5"
 local SCRIPT_VERSION = SCRIPT_VERSION_UPDATER
-local SCRIPT_LAST_UPDATED = "8/18/2021"
+local SCRIPT_LAST_UPDATED = "08/18/2022"
 local SCRIPT_AUTHOR = "Orietto"
 local SCRIPT_IS_BETA = false
 
@@ -313,7 +313,7 @@ function OriUtils.AddDrawMenu(data)
         local id = element.id
         local displayText = element.displayText
 
-        Menu.Checkbox(cacheName .. ".draw." .. id, "Draw " .. displayText .. " range", false)
+        Menu.Checkbox(cacheName .. ".draw." .. id, "Draw " .. displayText .. " range", true)
         Menu.Indent(function()
             Menu.ColorPicker(cacheName .. ".draw." .. id .. ".color", "Color", SCRIPT_COLOR)
         end)
@@ -321,7 +321,7 @@ function OriUtils.AddDrawMenu(data)
 
     Menu.Separator()
 
-    Menu.Checkbox(cacheName .. ".draw." .. "comboDamage", "Draw combo damage on healthbar", false)
+    Menu.Checkbox(cacheName .. ".draw." .. "comboDamage", "Draw combo damage on healthbar", true)
 end
 
 ---@param forcedTarget AIHeroClient
@@ -654,7 +654,7 @@ function fightModes.Combo(lagFree)
                 local pred = spell:GetPrediction(target)
 
                 if pred and pred.CastPosition then
-                    if pred.HitChanceEnum >= Enums.HitChance.Medium then
+                    if pred.HitChanceEnum >= Enums.HitChance.Low then
                         if Graves.CastR(pred.CastPosition) then
                             return true
                         end
@@ -998,29 +998,22 @@ end
 
 function Graves.InitMenu()
     local function QHeader()
-        Menu.ColoredText("Q [End of the Line]", SCRIPT_COLOR, true)
+        Menu.Separator("Q [End of the Line]", SCRIPT_COLOR, true)
     end
 
     local function WHeader()
-        Menu.ColoredText("W [Smoke Screen]", SCRIPT_COLOR, true)
+        Menu.Separator("W [Smoke Screen]", SCRIPT_COLOR, true)
     end
 
     local function EHeader()
-        Menu.ColoredText("E [Quickdraw]", SCRIPT_COLOR, true)
+        Menu.Separator("E [Quickdraw]", SCRIPT_COLOR, true)
     end
 
     local function RHeader()
-        Menu.ColoredText("R [Collateral Damage]", SCRIPT_COLOR, true)
+        Menu.Separator("R [Collateral Damage]", SCRIPT_COLOR, true)
     end
 
     local function GravesMenu()
-        Menu.Text("Version: " .. SCRIPT_VERSION, true)
-        Menu.Text("Last Updated: " .. SCRIPT_LAST_UPDATED, true)
-        if SCRIPT_IS_BETA then
-            Menu.ColoredText("This is a beta, which means you'll have to redownload the final version once it's done", 0xFFFF00FF, true)
-            Menu.ColoredText("If you find any issues, report them to " .. SCRIPT_AUTHOR, 0xFFFF00FF, true)
-        end
-
         Menu.NewTree("Graves.comboMenu", "Combo Settings", function()
             Menu.ColumnLayout("Graves.comboMenu.QW", "Graves.comboMenu.QW", 2, true, function()
                 QHeader()
@@ -1053,20 +1046,21 @@ function Graves.InitMenu()
             end)
         end)
 
+        Menu.NewTree("Graves.drawMenu", "Draw Settings", function()
+            Menu.Separator("Draw Settings")
+            OriUtils.AddDrawMenu(drawData)
+        end)
+
         Menu.NewTree("Graves.harassMenu", "Harass Settings", function()
             QHeader()
 
             Menu.Checkbox("Graves.harass.useQ", "Enable Q", true)
 
-            Menu.Separator()
-
             WHeader()
             
             Menu.Checkbox("Graves.harass.useW", "Enable W", false)
 
-            Menu.Separator()
-
-            Menu.Slider("Graves.harass.minMana", "Harass minimum mana", 50, 0, 100, 1)
+            Menu.Slider("Graves.harass.minMana", "Harass minimum mana", 30, 0, 100, 1)
         end)
 
         Menu.NewTree("Graves.clearMenu", "Clear Settings", function()
@@ -1077,16 +1071,12 @@ function Graves.InitMenu()
                 Menu.Slider("Graves.clear.useQ.minHit", "If it will hit X minions", 2, 1, 5, 1)
             end)
 
-            Menu.Separator()
-
             WHeader()
 
             Menu.Checkbox("Graves.clear.useW", "Enable W", false)
             Menu.Indent(function()
                 Menu.Slider("Graves.clear.useW.minHit", "If it will hit X minions", 3, 1, 5, 1)
             end)
-
-            Menu.Separator()
 
             EHeader()
 
@@ -1095,9 +1085,7 @@ function Graves.InitMenu()
                 Menu.Dropdown("Graves.clear.useE.mode", "Mode", 0, {"To Mouse", "To Target"})
             end)
 
-            Menu.Separator()
-
-            Menu.Slider("Graves.clear.minMana", "Clear minimum mana", 40, 0, 100, 1)
+            Menu.Slider("Graves.clear.minMana", "Clear minimum mana", 30, 0, 100, 1)
         end)
 
         Menu.NewTree("Graves.lasthitMenu", "Last hit Settings", function()
@@ -1108,8 +1096,6 @@ function Graves.InitMenu()
                 Menu.Slider("Graves.lh.useQ.minHit", "If it will kill X minions", 2, 1, 5, 1)
             end)
 
-            Menu.Separator()
-
             WHeader()
 
             Menu.Checkbox("Graves.lh.useW", "Enable W", false)
@@ -1117,12 +1103,11 @@ function Graves.InitMenu()
                 Menu.Slider("Graves.lh.useW.minHit", "If it will kill X minions", 2, 1, 5, 1)
             end)
 
-            Menu.Separator()
-
-            Menu.Slider("Graves.lh.minMana", "Last hit minimum mana", 40, 0, 100, 1)
+            Menu.Slider("Graves.lh.minMana", "Last hit minimum mana", 30, 0, 100, 1)
         end)
 
         Menu.NewTree("Graves.ksMenu", "Killsteal Settings", function()
+            Menu.Separator("Killsteal Settings")
             Menu.Checkbox("Graves.ks.useQ", "Killsteal with Q", true)
             Menu.Checkbox("Graves.ks.useW", "Killsteal with W", true)
             Menu.Checkbox("Graves.ks.useR", "Killsteal with R", true)
@@ -1149,20 +1134,18 @@ function Graves.InitMenu()
         end)
 
         Menu.NewTree("Graves.miscMenu", "Misc Settings", function()
+            Menu.Separator("Misc Settings")
             Menu.Keybind("Graves.misc.forceR", "Force R", string.byte("T"))
         end)
 
         Menu.NewTree("Graves.hcMenu", "Hitchance Settings", function()
-            Menu.Slider("Graves.hc.Q", "Q Hitchance", 35, 0, 100, 1)
+            Menu.Separator("Hitchance Settings")
+            Menu.Slider("Graves.hc.Q", "Q Hitchance", 15, 0, 100, 1)
             Menu.Slider("Graves.hc.W", "W Hitchance", 35, 0, 100, 1)
-            Menu.Slider("Graves.hc.R", "R Hitchance", 45, 0, 100, 1)
+            Menu.Slider("Graves.hc.R", "R Hitchance", 35, 0, 100, 1)
         end)
 
-        Menu.NewTree("Graves.drawMenu", "Draw Settings", function()
-            OriUtils.AddDrawMenu(drawData)
-        end)
-
-        Menu.Text("Author: " .. SCRIPT_AUTHOR, true)
+        Menu.Separator("Author: Orietto")
     end
 
     Menu.RegisterMenu(SCRIPT_NAME, SCRIPT_NAME, GravesMenu)
