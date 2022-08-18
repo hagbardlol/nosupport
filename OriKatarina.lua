@@ -1,9 +1,9 @@
 if Player.CharName ~= "Katarina" then return end
 
 local SCRIPT_NAME = "Ori Katarina"
-local SCRIPT_VERSION_UPDATER = "1.0.6"
+local SCRIPT_VERSION_UPDATER = "1.0.7"
 local SCRIPT_VERSION = SCRIPT_VERSION_UPDATER
-local SCRIPT_LAST_UPDATED = "11/28/2021"
+local SCRIPT_LAST_UPDATED = "08/18/2022"
 local SCRIPT_AUTHOR = "Orietto"
 local SCRIPT_IS_BETA = false
 
@@ -537,13 +537,13 @@ function OriUtils.AddDrawMenu(data)
         local id = element.id
         local displayText = element.displayText
 
-        Menu.Checkbox(cacheName .. ".draw." .. id, "Draw " .. displayText .. " range", false)
+        Menu.Checkbox(cacheName .. ".draw." .. id, "Draw " .. displayText .. " range", true)
         Menu.Indent(function()
             Menu.ColorPicker(cacheName .. ".draw." .. id .. ".color", "Color", SCRIPT_COLOR)
         end)
     end
 
-    Menu.Checkbox(cacheName .. ".draw." .. "comboDamage", "Draw combo damage on healthbar", false)
+    Menu.Checkbox(cacheName .. ".draw." .. "comboDamage", "Draw combo damage on healthbar", true)
 end
 
 ---@param forcedTarget AIHeroClient
@@ -1811,6 +1811,7 @@ function Katarina.InitMenu()
 
     local function KatarinaMenu()
         Menu.NewTree("Katarina.drawMenu", "Draw Settings", function()
+            Menu.Separator("Draw Settings")
             OriUtils.AddDrawMenu(drawData)
 
             Menu.Checkbox("Katarina.draw.smartKSRState", "Print Smart KS R state", true)
@@ -1822,27 +1823,9 @@ function Katarina.InitMenu()
             Menu.Checkbox("Katarina.draw.daggersDuration", "Draw daggers duration", true)
             Menu.ColorPicker("Katarina.draw.daggersDuration.color", "Daggers duration circle color", SCRIPT_COLOR)
         end)
-        Menu.NewTree("Katarina.globalMenu", "Global Settings", function()
-            --Menu.Dropdown("Katarina.global.rDaggersMode", "R Damage Calculations", 0, {"Static", "Dynamic"})
-            Menu.Keybind("Katarina.global.rDaggersMode", "R Damage Calcs: Static/Dynamic", string.byte("Z"), true, false)
-
-            Menu.Indent(function()
-                Menu.Slider("Katarina.global.rDaggers", "Static: R Daggers to consider in calcs", 15, 1, 15, 1)
-                Menu.ColoredText("Dynamic mode only considers the daggers", 0x00FFFFFF)
-                Menu.ColoredText("that would hit the enemy if this started", 0x00FFFFFF)
-                Menu.ColoredText("moving away from Kata at their current speed", 0x00FFFFFF)
-                --[[
-                    if rCalculationsMode == 0 then 
-                        Menu.Slider("Katarina.global.rDaggers", "R Daggers to consider in calcs", 15, 1, 15, 1)
-                    elseif rCalculationsMode == 1 then
-                        Menu.ColoredText("Dynamic mode only considers the daggers that would hit the enemy if this started moving away from Katarina at their current speed", 0x00FFFFFF)
-                    end
-                --]]
-            end)
-        end)
 
         Menu.NewTree("Katarina.comboMenu", "Combo Settings", function()
-            Menu.Dropdown("Katarina.combo.spellPrio", "Combo to Champion Spell Priority", 0, {"Q >> E", "E >> Q"})
+            Menu.Dropdown("Katarina.combo.spellPrio", "Combo to Champion Spell Prio", 0, {"Q >> E", "E >> Q"})
 
             Menu.ColumnLayout("Katarina.comboMenu.QW", "Katarina.comboMenu.QW", 2, true, function()
                 QHeader()
@@ -1878,11 +1861,31 @@ function Katarina.InitMenu()
                 Menu.Indent(function()
                     Menu.Checkbox("Katarina.combo.useR.minEnemies", "Use if X enemies around you", true)
                     Menu.Indent(function()
-                        Menu.Slider("Katarina.combo.useR.minEnemies.number", "Min enemies", 3, 1, 3, 1)
+                        Menu.Slider("Katarina.combo.useR.minEnemies.number", "Min enemies", 2, 1, 3, 1)
                     end)
                     --Menu.Checkbox("Katarina.combo.useR.killable", "Use if enemy killable", true)
                     Menu.Checkbox("Katarina.combo.useR.cancelNoEnemies", "Cancel R if no enemies around", true)
                 end)
+            end)
+        end)
+
+        Menu.NewTree("Katarina.globalMenu", "Global Settings", function()
+            Menu.Separator("Global Settings")
+            --Menu.Dropdown("Katarina.global.rDaggersMode", "R Damage Calculations", 0, {"Static", "Dynamic"})
+            Menu.Keybind("Katarina.global.rDaggersMode", "R Damage Calcs: Static/Dynamic", string.byte("Z"), true, false)
+
+            Menu.Indent(function()
+                Menu.Slider("Katarina.global.rDaggers", "Static: R Daggers to consider in calcs", 15, 1, 15, 1)
+                Menu.Text("Dynamic mode only considers the daggers", 0x00FFFFFF)
+                Menu.Text("that would hit the enemy if this started", 0x00FFFFFF)
+                Menu.Text("moving away from Kata at their current speed", 0x00FFFFFF)
+                --[[
+                    if rCalculationsMode == 0 then 
+                        Menu.Slider("Katarina.global.rDaggers", "R Daggers to consider in calcs", 15, 1, 15, 1)
+                    elseif rCalculationsMode == 1 then
+                        Menu.ColoredText("Dynamic mode only considers the daggers that would hit the enemy if this started moving away from Katarina at their current speed", 0x00FFFFFF)
+                    end
+                --]]
             end)
         end)
 
@@ -1893,7 +1896,7 @@ function Katarina.InitMenu()
         end)
 
         Menu.NewTree("Katarina.clearMenu", "Clear Settings", function()
-            Menu.Checkbox("Katarina.clear.enemyAround", "Clear even if enemies around", false)
+            Menu.Checkbox("Katarina.clear.enemyAround", "Clear even if enemies around", true)
 
             QHeader()
 
@@ -1915,7 +1918,7 @@ function Katarina.InitMenu()
         end)
 
         Menu.NewTree("Katarina.lhMenu", "Last hit Settings", function()
-            Menu.Checkbox("Katarina.lh.enemyAround", "Last hit even if enemies around", false)
+            Menu.Checkbox("Katarina.lh.enemyAround", "Last hit even if enemies around", true)
             
             QHeader()
 
@@ -1923,7 +1926,7 @@ function Katarina.InitMenu()
 
             EHeader()
 
-            Menu.Checkbox("Katarina.lh.useE", "Enable E on killable minions outside AA range", false)
+            Menu.Checkbox("Katarina.lh.useE", "E on killable minions outside AA range", true)
         end)
 
         Menu.NewTree("Katarina.fleeMenu", "Flee Settings", function()
@@ -1937,6 +1940,7 @@ function Katarina.InitMenu()
         end)
 
         Menu.NewTree("Katarina.ksMenu", "Smart KS", function()
+            Menu.Separator("Smart KS")
             Menu.Checkbox("Katarina.ks.useQ", "Use Q in Smart KS", true)
             Menu.Checkbox("Katarina.ks.useW", "Use W in Smart KS", true)
             Menu.Checkbox("Katarina.ks.useE", "Use E in Smart KS", true)
