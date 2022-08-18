@@ -1,9 +1,9 @@
 if Player.CharName ~= "Azir" then return end
 
 local SCRIPT_NAME = "Ori Azir"
-local SCRIPT_VERSION_UPDATER = "1.1.3"
+local SCRIPT_VERSION_UPDATER = "1.1.4"
 local SCRIPT_VERSION = SCRIPT_VERSION_UPDATER
-local SCRIPT_LAST_UPDATED = "11/26/2021"
+local SCRIPT_LAST_UPDATED = "08/18/2022"
 local SCRIPT_AUTHOR = "Orietto"
 local SCRIPT_IS_BETA = false
 
@@ -532,15 +532,13 @@ function OriUtils.AddDrawMenu(data)
         local id = element.id
         local displayText = element.displayText
 
-        Menu.Checkbox(cacheName .. ".draw." .. id, "Draw " .. displayText .. " range", false)
+        Menu.Checkbox(cacheName .. ".draw." .. id, "Draw " .. displayText .. " range", true)
         Menu.Indent(function()
             Menu.ColorPicker(cacheName .. ".draw." .. id .. ".color", "Color", SCRIPT_COLOR)
         end)
     end
 
-    Menu.Separator()
-
-    Menu.Checkbox(cacheName .. ".draw." .. "comboDamage", "Draw combo damage on healthbar", false)
+    Menu.Checkbox(cacheName .. ".draw." .. "comboDamage", "Draw combo damage on healthbar", true)
 end
 
 ---@param forcedTarget AIHeroClient
@@ -1875,28 +1873,22 @@ end
 
 function Azir.InitMenu()
     local function QHeader()
-        Menu.ColoredText(drawData[1].displayText, SCRIPT_COLOR, true)
+        Menu.Separator(drawData[1].displayText, SCRIPT_COLOR, true)
     end
 
     local function WHeader()
-        Menu.ColoredText(drawData[2].displayText, SCRIPT_COLOR, true)
+        Menu.Separator(drawData[2].displayText, SCRIPT_COLOR, true)
     end
 
     local function EHeader()
-        Menu.ColoredText(drawData[3].displayText, SCRIPT_COLOR, true)
+        Menu.Separator(drawData[3].displayText, SCRIPT_COLOR, true)
     end
 
     local function RHeader()
-        Menu.ColoredText(drawData[4].displayText, SCRIPT_COLOR, true)
+        Menu.Separator(drawData[4].displayText, SCRIPT_COLOR, true)
     end
 
     local function AzirMenu()
-        Menu.Text("Version: " .. SCRIPT_VERSION, true)
-        Menu.Text("Last Updated: " .. SCRIPT_LAST_UPDATED, true)
-        if SCRIPT_IS_BETA then
-            Menu.ColoredText("This is a beta, if you find any issues, report them to " .. SCRIPT_AUTHOR, 0xFFFF00FF, true)
-        end
-
         Menu.NewTree("Azir.comboMenu", "Combo Settings", function()
             Menu.ColumnLayout("Azir.comboMenu.QW", "Azir.comboMenu.QW", 2, true, function()
                 QHeader()
@@ -1905,9 +1897,9 @@ function Azir.InitMenu()
                 Menu.Indent(function()
                     Menu.Dropdown("Azir.combo.useQ.mode", "Mode", 1, {"Always", "Smart"})
                     Menu.Indent(function()
-                        Menu.ColoredText("Smart mode will wait until there are 2 or more available soldiers\nOR enemy is killable with Q/W/Q+W", 0xFFFF00FF)
+                        Menu.Text("Smart mode will wait until there are 2 or more \navailable soldiers R enemy is killable with Q/W/Q+W")
                     end)
-                    Menu.Checkbox("Azir.combo.useQ.reachOnly", "Use only when no soldier is in AA range", true)
+                    Menu.Checkbox("Azir.combo.useQ.reachOnly", "Use only when no soldier is in AA range", false)
                 end)
 
                 Menu.NextColumn()
@@ -1916,8 +1908,6 @@ function Azir.InitMenu()
 
                 Menu.Checkbox("Azir.combo.useW", "Enable W", true)
             end)
-
-            Menu.Separator()
 
             Menu.ColumnLayout("Azir.comboMenu.ER", "Azir.comboMenu.ER", 2, true, function()
                 EHeader()
@@ -1939,6 +1929,49 @@ function Azir.InitMenu()
             end)
         end)
 
+        Menu.NewTree("Azir.drawMenu", "Draw Settings", function()
+            OriUtils.AddDrawMenu(drawData)
+
+            Menu.Checkbox("Azir.draw.gpEStatus", "Print gapclose with E status", true)
+
+            Menu.Checkbox("Azir.draw.soldiersRange", "Draw active soldiers range", true)
+            Menu.ColorPicker("Azir.draw.soldiersRange.color", "Active soldiers range color", SCRIPT_COLOR)
+
+            Menu.Checkbox("Azir.draw.customPos", "Draw insec custom pos indicators", true)
+            Menu.ColorPicker("Azir.draw.customPos.color", "Insec custom pos indicators color", SCRIPT_COLOR)
+
+            Menu.Checkbox("Azir.draw.backupPos", "Draw insec backup pos line", false)
+            Menu.ColorPicker("Azir.draw.backupPos.color", "Insec backup pos line color", 0x00FF00FF)
+        end)
+
+        Menu.NewTree("Azir.insecMenu", "Insec Settings", function()
+            Menu.Separator("Insec Settings")
+            Menu.Keybind("Azir.insec.key", "Insec Key", string.byte("T"))
+
+            Menu.Checkbox("Azir.insec.gapclose", "Smart gapclose with Q-W-E", true)
+
+            Menu.Checkbox("Azir.insec.move", "Move to mouse pos", true)
+
+            Menu.Checkbox("Azir.insec.soldierLandPos", "Place soldier near where\nenemy will land after insec", true)
+
+            Menu.Separator("Insec target positions")
+
+
+            Menu.Indent(function()
+                Menu.Checkbox("Azir.insec.method.custom", "To custom pos", true)
+                Menu.Indent(function()
+                    Menu.Keybind("Azir.insec.method.custom.setPos", "Set custom pos", string.byte("G"))
+                    Menu.Keybind("Azir.insec.method.custom.clearPos", "Clear custom pos", string.byte("H"))
+                end)
+                
+                Menu.Checkbox("Azir.insec.method.turret", "To ally turret", true)
+                Menu.Slider("Azir.insec.method.turret.maxRange", "Ally turret max check range", 3000, 1000, 3000, 100)
+            
+                Menu.Checkbox("Azir.insec.method.ally", "To ally hero", true)
+                Menu.Slider("Azir.insec.method.ally.maxRange", "Ally hero max check range", 2000, 1000, 3000, 100)
+            end)
+        end)
+
         Menu.NewTree("Azir.harassMenu", "Harass Settings", function()
             QHeader()
 
@@ -1949,15 +1982,13 @@ function Azir.InitMenu()
             end)
             --]]
 
-            Menu.Separator()
-
             WHeader()
 
             Menu.Checkbox("Azir.harass.useW", "Enable W", true)
             Menu.Indent(function()
                 Menu.Checkbox("Azir.harass.useW.comboQ", "Use early")
                 Menu.Indent(function()
-                    Menu.ColoredText("This option will use W for a W-Q combo if target is in Q range and Q is available", 0xFFFF00FF)
+                    Menu.ColoredText("This option will use W for a W-Q combo if\ntarget is in Q range and Q is available", 0xFFFF00FF)
                 end)
             end)
         end)
@@ -1967,12 +1998,10 @@ function Azir.InitMenu()
             
             QHeader()
             
-            Menu.Checkbox("Azir.clear.useQ", "Enable Q", false)
+            Menu.Checkbox("Azir.clear.useQ", "Enable Q", true)
             Menu.Indent(function()
-                Menu.Checkbox("Azir.clear.useQ.enemyAround", "Clear with Q even if enemies around", false)
+                Menu.Checkbox("Azir.clear.useQ.enemyAround", "Clear with Q even if enemies around", true)
             end)
-
-            Menu.Separator()
 
             WHeader()
 
@@ -1983,63 +2012,24 @@ function Azir.InitMenu()
         end)
 
         Menu.NewTree("Azir.fleeMenu", "Flee Settings", function()
-            Menu.Checkbox("Azir.flee.forceMaxRange", "Always try to flee at max range", false)
+            Menu.Checkbox("Azir.flee.forceMaxRange", "Always try to flee at max range", true)
 
             QHeader()
 
             Menu.Checkbox("Azir.flee.useQ", "Enable Q", true)
 
-            Menu.Separator()
-
             WHeader()
 
             Menu.Checkbox("Azir.flee.useW", "Enable W if no good soldier near mouse", true)
-
-            Menu.Separator()
 
             EHeader()
 
             Menu.Checkbox("Azir.flee.useE", "Enable E", true)
         end)
 
-        Menu.NewTree("Azir.insecMenu", "Insec Settings", function()
-            Menu.Keybind("Azir.insec.key", "Insec Key", string.byte("T"))
-
-            Menu.Checkbox("Azir.insec.gapclose", "Smart gapclose with Q-W-E", true)
-            Menu.Checkbox("Azir.insec.move", "Move to mouse pos", true)
-            
-            Menu.Separator()
-
-            Menu.Checkbox("Azir.insec.soldierLandPos", "Place soldier near where\nenemy will land after insec", true)
-
-            Menu.Separator()
-
-            Menu.ColoredText("Insec target positions", SCRIPT_COLOR)
-
-
-            Menu.Indent(function()
-                Menu.Checkbox("Azir.insec.method.custom", "To custom pos", true)
-                Menu.Indent(function()
-                    Menu.Keybind("Azir.insec.method.custom.setPos", "Set custom pos", string.byte("G"))
-                    Menu.Keybind("Azir.insec.method.custom.clearPos", "Clear custom pos", string.byte("H"))
-                end)
-                
-                Menu.Separator()
-                
-                Menu.Checkbox("Azir.insec.method.turret", "To ally turret", true)
-                Menu.Slider("Azir.insec.method.turret.maxRange", "Ally turret max check range", 3000, 1000, 3000, 100)
-
-                Menu.Separator()
-            
-                Menu.Checkbox("Azir.insec.method.ally", "To ally hero", true)
-                Menu.Slider("Azir.insec.method.ally.maxRange", "Ally hero max check range", 2000, 1000, 3000, 100)
-            end)
-        end)
-
         Menu.NewTree("Azir.ksMenu", "Killsteal Settings", function()
+            Menu.Separator("Killsteal Settings")
             Menu.Checkbox("Azir.ks.onlyCombo", "Only KS during Combo mode", true)
-
-            Menu.Separator()
 
             RHeader()
 
@@ -2065,40 +2055,21 @@ function Azir.InitMenu()
         end)
 
         Menu.NewTree("Azir.miscMenu", "Misc Settings", function()
-            Menu.Checkbox("Azir.misc.saferDash", "Safer E-Q dash\nWill use Q earlier when dashing in flee or insec", false)
-        end)
-
-        Menu.NewTree("Azir.drawMenu", "Draw Settings", function()
-            OriUtils.AddDrawMenu(drawData)
-
-            Menu.Separator()
-
-            Menu.Checkbox("Azir.draw.gpEStatus", "Print gapclose with E status", true)
-
-            Menu.Separator()
-
-            Menu.Checkbox("Azir.draw.soldiersRange", "Draw active soldiers range", false)
-            Menu.ColorPicker("Azir.draw.soldiersRange.color", "Active soldiers range color", SCRIPT_COLOR)
-
-            Menu.Separator()
-
-            Menu.Checkbox("Azir.draw.customPos", "Draw insec custom pos indicators", true)
-            Menu.ColorPicker("Azir.draw.customPos.color", "Insec custom pos indicators color", SCRIPT_COLOR)
-
-            Menu.Checkbox("Azir.draw.backupPos", "Draw insec backup pos line", false)
-            Menu.ColorPicker("Azir.draw.backupPos.color", "Insec backup pos line color", 0x00FF00FF)
+            Menu.Separator("Misc Settings")
+            Menu.Checkbox("Azir.misc.saferDash", "Safer E-Q dash will use Q earlier\nwhen dashing in flee or insec", false)
         end)
 
         Menu.NewTree("Azir.hcMenu", "Hitchance Settings", function()
-            Menu.Slider("Azir.hc.Q", "Q Hitchance", 35, 0, 100, 1)
-            --Menu.Slider("Azir.hc.R", "R Hitchance", 40, 0, 100, 1)
+            Menu.Separator("Hitchance Settings")
+            Menu.Slider("Azir.hc.Q", "Q Hitchance", 15, 0, 100, 1)
+            --Menu.Slider("Azir.hc.R", "R Hitchance", 35, 0, 100, 1)
             Menu.Dropdown("Azir.hc.RInsec", "Insec R Hitchance", 1, {"Use more often (Less accuracy)", "Better accuracy (Used less frequently)"})
             Menu.Indent(function()
                 Menu.Checkbox("Azir.hc.RInsec.perp", "Enable perpendicular check", true)
             end)
         end)
 
-        Menu.Text("Author: " .. SCRIPT_AUTHOR, true)
+        Menu.Separator("Author: Orietto")
     end
 
     Menu.RegisterMenu(SCRIPT_NAME, SCRIPT_NAME, AzirMenu)
