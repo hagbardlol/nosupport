@@ -1,9 +1,9 @@
 if Player.CharName ~= "Yasuo" then return end
 
 local SCRIPT_NAME = "Ori Yasuo"
-local SCRIPT_VERSION_UPDATER = "2.2.3"
+local SCRIPT_VERSION_UPDATER = "2.2.4"
 local SCRIPT_VERSION = SCRIPT_VERSION_UPDATER
-local SCRIPT_LAST_UPDATED = "8/31/2021"
+local SCRIPT_LAST_UPDATED = "08/18/2022"
 local SCRIPT_AUTHOR = "Orietto"
 local SCRIPT_IS_BETA = false
 
@@ -512,15 +512,13 @@ function OriUtils.AddDrawMenu(data)
         local id = element.id
         local displayText = element.displayText
 
-        Menu.Checkbox(cacheName .. ".draw." .. id, "Draw " .. displayText .. " range", false)
+        Menu.Checkbox(cacheName .. ".draw." .. id, "Draw " .. displayText .. " range", true)
         Menu.Indent(function()
             Menu.ColorPicker(cacheName .. ".draw." .. id .. ".color", "Color", SCRIPT_COLOR)
         end)
     end
 
-    Menu.Separator()
-
-    Menu.Checkbox(cacheName .. ".draw." .. "comboDamage", "Draw combo damage on healthbar", false)
+    Menu.Checkbox(cacheName .. ".draw." .. "comboDamage", "Draw combo damage on healthbar", true)
 end
 
 ---@param forcedTarget AIHeroClient
@@ -1608,7 +1606,7 @@ function fightModes.Combo(lagFree)
                         local passesHitchance = false
 
                         if q3Expires then
-                            passesHitchance = pred.HitChanceEnum >= Enums.HitChance.VeryLow
+                            passesHitchance = pred.HitChanceEnum >= Enums.HitChance.Low
                         else
                             passesHitchance = pred.HitChance >= Yasuo.GetHitchance(slots.Q, hasQ3)
                         end
@@ -1672,7 +1670,7 @@ function fightModes.Harass(lagFree)
                         local passesHitchance = false
 
                         if q3Expires then
-                            passesHitchance = pred.HitChanceEnum >= Enums.HitChance.VeryLow
+                            passesHitchance = pred.HitChanceEnum >= Enums.HitChance.Low
                         else
                             passesHitchance = pred.HitChance >= Yasuo.GetHitchance(slots.Q, hasQ3)
                         end
@@ -2243,15 +2241,9 @@ end
 
 function Yasuo.InitMenu()
     local function YasuoMenu()
-        Menu.Text("Version: " .. SCRIPT_VERSION, true)
-        Menu.Text("Last Updated: " .. SCRIPT_LAST_UPDATED, true)
-        if SCRIPT_IS_BETA then
-            Menu.ColoredText("This is a beta, if you find any issues, report them to " .. SCRIPT_AUTHOR, 0xFFFF00FF, true)
-        end
-
         Menu.NewTree("Yasuo.comboMenu", "Combo Settings", function()
             Menu.ColumnLayout("Yasuo.comboMenu.QW", "Yasuo.comboMenu.QW", 2, true, function()
-                Menu.ColoredText("Q [Steel Tempest]", SCRIPT_COLOR, true)
+                Menu.Separator("Q [Steel Tempest]")
 
                 Menu.Checkbox("Yasuo.combo.useQ", "Enable Q", true)
                 Menu.Indent(function()                
@@ -2262,11 +2254,11 @@ function Yasuo.InitMenu()
 
                 Menu.NextColumn()
 
-                --Menu.ColoredText("W [Wind Wall]", SCRIPT_COLOR, true)
+                --Menu.Separator("W [Wind Wall]")
             end)
 
             Menu.ColumnLayout("Yasuo.comboMenu.ER", "Yasuo.comboMenu.ER", 2, true, function()
-                Menu.ColoredText("E [Sweeping Blade]", SCRIPT_COLOR, true)
+                Menu.Separator("E [Sweeping Blade]")
 
                 Menu.Checkbox("Yasuo.combo.useE", "Enable E", true)
                 Menu.Indent(function()
@@ -2286,31 +2278,39 @@ function Yasuo.InitMenu()
 
                 Menu.NextColumn()
 
-                Menu.ColoredText("R [Last Breath]", SCRIPT_COLOR, true)
+                Menu.Separator("R [Last Breath]")
 
                 Menu.Checkbox("Yasuo.combo.useR", "Enable R", true)
                 Menu.Indent(function()
                     Menu.Slider("Yasuo.combo.useR.fallLimit", "Wait until X to cast", 140, 100, 250, 10)
                     Menu.Indent(function()
-                        Menu.Text("Wait until knockup/knockback buff remaining duration is X milliseconds or lower")
+                        --Menu.Text("Wait until knockup/knockback buff remaining duration is X milliseconds or lower")
                     end)
                     Menu.Slider("Yasuo.combo.useR.minHealth", "If enemy %HP <=", 55, 1, 100, 1)
                     Menu.Slider("Yasuo.combo.useR.enemyCount", "If X enemies airborne", 2, 1, 5, 1)
-                    Menu.Checkbox("Yasuo.combo.useR.maxDamage", "Try to maximize damage by EQ'ing another unit", false)
+                    Menu.Checkbox("Yasuo.combo.useR.maxDamage", "Try to maximize damage by EQ another unit", false)
                     Menu.Indent(function()
-                        Menu.Text("It will buffer EQ on another unit before using R on main target if this is too far away")
+                        --Menu.Text("It will buffer EQ on another unit before using R on main target if this is too far away")
                     end)
                 end)
             end)
         end)
 
+        Menu.NewTree("Yasuo.drawMenu", "Drawings", function()
+                Menu.Separator("Drawings")
+            OriUtils.AddDrawMenu(drawData)
+
+            Menu.Checkbox("Yasuo.draw.bbWarnings", "Print beyblade warnings", false)
+        end)
+
         Menu.NewTree("Yasuo.beybladeMenu", "Beyblade Settings", function()
+            Menu.Separator("Beyblade Settings")
             Menu.Keybind("Yasuo.bb.key", "Beyblade Key", string.byte("T"))
             Menu.Checkbox("Yasuo.bb.useR", "Use R (if available) after beyblade", true)
         end)
 
         Menu.NewTree("Yasuo.harassMenu", "Harass Settings", function()
-            Menu.ColoredText("Q [Steel Tempest]", SCRIPT_COLOR, true)
+            Menu.Separator("Q [Steel Tempest]")
 
             Menu.Checkbox("Yasuo.harass.useQ", "Enable Q", true)
             Menu.Indent(function()
@@ -2322,7 +2322,7 @@ function Yasuo.InitMenu()
         end)
 
         Menu.NewTree("Yasuo.clearMenu", "Clear Settings", function()
-            Menu.ColoredText("Q [Steel Tempest]", SCRIPT_COLOR, true)
+            Menu.Separator("Q [Steel Tempest]")
 
             Menu.Checkbox("Yasuo.clear.useQ", "Enable Q", true)
             Menu.Indent(function()
@@ -2336,9 +2336,7 @@ function Yasuo.InitMenu()
                 end)
             end)
 
-            Menu.Separator()
-
-            Menu.ColoredText("E [Sweeping Blade]", SCRIPT_COLOR, true)
+            Menu.Separator("E [Sweeping Blade]")
 
             Menu.Checkbox("Yasuo.clear.useE", "Enable E", true)
             Menu.Indent(function()
@@ -2348,16 +2346,14 @@ function Yasuo.InitMenu()
         end)
 
         Menu.NewTree("Yasuo.lhMenu", "Last Hit Settings", function()
-            Menu.ColoredText("Q [Steel Tempest]", SCRIPT_COLOR, true)
+            Menu.Separator("Q [Steel Tempest]")
 
             Menu.Checkbox("Yasuo.lh.useQ", "Enable Q", true)
             Menu.Indent(function()
                 Menu.Checkbox("Yasuo.lh.useQ.Q3", "Use Q3", false)
             end)
 
-            Menu.Separator()
-
-            Menu.ColoredText("E [Sweeping Blade]", SCRIPT_COLOR, true)
+            Menu.Separator("E [Sweeping Blade]")
 
             Menu.Checkbox("Yasuo.lh.useE", "Enable E", true)
             Menu.Indent(function()
@@ -2366,6 +2362,7 @@ function Yasuo.InitMenu()
         end)
 
         Menu.NewTree("Yasuo.fleeMenu", "Flee Settings", function()
+                Menu.Separator("Flee Settings")
             Menu.Checkbox("Yasuo.flee.useE", "Use E", true)
             Menu.Indent(function()
                 Menu.Checkbox("Yasuo.flee.stackQ", "Stack Q while fleeing", true)
@@ -2373,9 +2370,8 @@ function Yasuo.InitMenu()
         end)
 
         Menu.NewTree("Yasuo.miscMenu", "Misc Settings", function()
+                Menu.Separator("Misc Settings")
             Menu.Keybind("Yasuo.misc.stackQ", "Stack Q", string.byte("G"))
-
-            Menu.Separator()
 
             Menu.Checkbox("Yasuo.misc.useW", "Enable W to block AAs", true)
             Menu.Indent(function()
@@ -2435,19 +2431,12 @@ function Yasuo.InitMenu()
         end)
 
         Menu.NewTree("Yasuo.hcMenu", "Hitchance Settings", function()
+                Menu.Separator("Hitchance Settings")
             Menu.Slider("Yasuo.hc.Q1", "Q1/Q2 Hitchance", 35, 0, 100, 1)
-            Menu.Slider("Yasuo.hc.Q3", "Q3 Hitchance", 35, 0, 100, 1)
+            Menu.Slider("Yasuo.hc.Q3", "Q3 Hitchance", 15, 0, 100, 1)
         end)
 
-        Menu.NewTree("Yasuo.drawMenu", "Drawings", function()
-            OriUtils.AddDrawMenu(drawData)
-
-            Menu.Separator()
-
-            Menu.Checkbox("Yasuo.draw.bbWarnings", "Print beyblade warnings", false)
-        end)
-
-        Menu.Text("Author: " .. SCRIPT_AUTHOR, true)
+        Menu.Separator("Author: Orietto")
     end
 
     Menu.RegisterMenu(SCRIPT_NAME, SCRIPT_NAME, YasuoMenu)
