@@ -1,9 +1,9 @@
 if Player.CharName ~= "Akali" then return end
 
 local SCRIPT_NAME = "Ori Akali"
-local SCRIPT_VERSION_UPDATER = "1.0.4"
+local SCRIPT_VERSION_UPDATER = "1.0.6"
 local SCRIPT_VERSION = SCRIPT_VERSION_UPDATER
-local SCRIPT_LAST_UPDATED = "9/1/2021"
+local SCRIPT_LAST_UPDATED = "08/18/2022"
 local SCRIPT_AUTHOR = "Orietto"
 local SCRIPT_IS_BETA = false
 
@@ -442,15 +442,13 @@ function OriUtils.AddDrawMenu(data)
         local id = element.id
         local displayText = element.displayText
 
-        Menu.Checkbox(cacheName .. ".draw." .. id, "Draw " .. displayText .. " range", false)
+        Menu.Checkbox(cacheName .. ".draw." .. id, "Draw " .. displayText .. " range", true)
         Menu.Indent(function()
             Menu.ColorPicker(cacheName .. ".draw." .. id .. ".color", "Color", SCRIPT_COLOR)
         end)
     end
 
-    Menu.Separator()
-
-    Menu.Checkbox(cacheName .. ".draw." .. "comboDamage", "Draw combo damage on healthbar", false)
+    Menu.Checkbox(cacheName .. ".draw." .. "comboDamage", "Draw combo damage on healthbar", true)
 end
 
 ---@param forcedTarget AIHeroClient
@@ -944,7 +942,7 @@ function fightModes.ExtraModes(lagFree)
             if target and target:Distance(me) < r2Range then
                 local pred = spells.R2:GetPrediction(target)
 
-                if pred and pred.HitChanceEnum >= Enums.HitChance.Medium then
+                if pred and pred.HitChanceEnum >= Enums.HitChance.Low then
                     if Akali.CastR(pred.CastPosition) then
                         return true
                     end
@@ -1508,28 +1506,22 @@ end
 
 function Akali.InitMenu()
     local function QHeader()
-        Menu.ColoredText(drawData[1].displayText, SCRIPT_COLOR, true)
+        Menu.Separator(drawData[1].displayText, SCRIPT_COLOR, true)
     end
 
     local function WHeader()
-        Menu.ColoredText(drawData[2].displayText, SCRIPT_COLOR, true)
+        Menu.Separator(drawData[2].displayText, SCRIPT_COLOR, true)
     end
 
     local function EHeader()
-        Menu.ColoredText(drawData[3].displayText, SCRIPT_COLOR, true)
+        Menu.Separator(drawData[3].displayText, SCRIPT_COLOR, true)
     end
 
     local function RHeader()
-        Menu.ColoredText(drawData[4].displayText, SCRIPT_COLOR, true)
+        Menu.Separator(drawData[4].displayText, SCRIPT_COLOR, true)
     end
 
     local function AkaliMenu()
-        Menu.Text("Version: " .. SCRIPT_VERSION, true)
-        Menu.Text("Last Updated: " .. SCRIPT_LAST_UPDATED, true)
-        if SCRIPT_IS_BETA then
-            Menu.ColoredText("This is a beta, if you find any issues, report them to " .. SCRIPT_AUTHOR, 0xFFFF00FF, true)
-        end
-
         Menu.NewTree("Akali.comboMenu", "Combo Settings", function()
             Menu.Checkbox("Akali.combo.smokePassive", "Don't AA or Cast (except R2) while stealthed", false)
             
@@ -1551,8 +1543,6 @@ function Akali.InitMenu()
                     Menu.Dropdown("Akali.combo.useW.dir", "Use towards", 0, {"Mouse", "Target"})
                 end)
             end)
-
-            Menu.Separator()
 
             Menu.ColumnLayout("Akali.comboMenu.ER", "Akali.comboMenu.ER", 2, true, function()
                 EHeader()
@@ -1602,6 +1592,13 @@ function Akali.InitMenu()
             end)
         end)
 
+        Menu.NewTree("Akali.drawMenu", "Draw Settings", function()
+            Menu.Separator("Draw Settings")
+            OriUtils.AddDrawMenu(drawData)
+
+            Menu.Checkbox("Akali.draw.killCombo", "Print kill combo on enemies", false)
+        end)
+
         Menu.NewTree("Akali.harassMenu", "Harass Settings", function()
             Menu.Checkbox("Akali.harass.smokePassive", "Don't AA or Cast while stealthed", false)
 
@@ -1617,10 +1614,10 @@ function Akali.InitMenu()
 
             Menu.Checkbox("Akali.clear.useQ", "Enable Q", true)
             Menu.Indent(function()
-                Menu.Slider("Akali.clear.useQ.minHit", "If it will hit X minions", 3, 1, 5, 1)
+                Menu.Slider("Akali.clear.useQ.minHit", "If it will hit X minions", 1, 1, 5, 1)
             end)
 
-            Menu.Checkbox("Akali.clear.enemyAround", "Clear even if enemy is around", false)
+            Menu.Checkbox("Akali.clear.enemyAround", "Clear even if enemy is around", true)
             Menu.Slider("Akali.clear.minMana", "Clear minimum Energy %", 25, 0, 100, 1)
         end)
 
@@ -1642,28 +1639,23 @@ function Akali.InitMenu()
         end)
 
         Menu.NewTree("Akali.miscMenu", "Misc Settings", function()
+            Menu.Separator("Misc Settings")
             Menu.Keybind("Akali.misc.forceR", "Force R1/R2", string.byte("T"))
         end)
 
         Menu.NewTree("Akali.ksMenu", "Killsteal Settings", function()
+            Menu.Separator("Killsteal Settings")
             Menu.Checkbox("Akali.ks.useQ", "Enable Q to KS", true)
         end)
 
         Menu.NewTree("Akali.hcMenu", "Hitchance Settings", function()
-            Menu.Slider("Akali.hc.Q", "Q Hitchance", 40, 0, 100, 1)
-            Menu.Slider("Akali.hc.E1", "E1 Hitchance", 40, 0, 100, 1)
-            Menu.Slider("Akali.hc.R2", "R2 Hitchance", 40, 0, 100, 1)
+            Menu.Separator("Hitchance Settings")
+            Menu.Slider("Akali.hc.Q", "Q Hitchance", 15, 0, 100, 1)
+            Menu.Slider("Akali.hc.E1", "E1 Hitchance", 15, 0, 100, 1)
+            Menu.Slider("Akali.hc.R2", "R2 Hitchance", 15, 0, 100, 1)
         end)
 
-        Menu.NewTree("Akali.drawMenu", "Draw Settings", function()
-            OriUtils.AddDrawMenu(drawData)
-
-            Menu.Separator()
-
-            Menu.Checkbox("Akali.draw.killCombo", "Print kill combo on enemies", false)
-        end)
-
-        Menu.Text("Author: " .. SCRIPT_AUTHOR, true)
+        Menu.Separator("Author: Orietto")
     end
 
     Menu.RegisterMenu(SCRIPT_NAME, SCRIPT_NAME, AkaliMenu)
