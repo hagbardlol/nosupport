@@ -2432,8 +2432,8 @@ function Yasuo.InitMenu()
 
         Menu.NewTree("Yasuo.hcMenu", "Hitchance Settings", function()
                 Menu.Separator("Hitchance Settings")
-            Menu.Slider("Yasuo.hc.Q1", "Q1/Q2 Hitchance", 35, 0, 100, 1)
-            Menu.Slider("Yasuo.hc.Q3", "Q3 Hitchance", 15, 0, 100, 1)
+            Menu.Slider("Yasuo.hc.Q1", "Q1/Q2 Hitchance", 15, 0, 100, 1)
+            Menu.Slider("Yasuo.hc.Q3", "Q3 Hitchance", 35, 0, 100, 1)
         end)
 
         Menu.Separator("Author: Orietto")
