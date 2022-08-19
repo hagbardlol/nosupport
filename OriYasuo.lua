@@ -1,7 +1,7 @@
 if Player.CharName ~= "Yasuo" then return end
 
 local SCRIPT_NAME = "Ori Yasuo"
-local SCRIPT_VERSION_UPDATER = "2.2.4"
+local SCRIPT_VERSION_UPDATER = "2.2.5"
 local SCRIPT_VERSION = SCRIPT_VERSION_UPDATER
 local SCRIPT_LAST_UPDATED = "08/18/2022"
 local SCRIPT_AUTHOR = "Orietto"
