@@ -1,7 +1,7 @@
 if Player.CharName ~= "Katarina" then return end
 
 local SCRIPT_NAME = "Ori Katarina"
-local SCRIPT_VERSION_UPDATER = "1.0.7"
+local SCRIPT_VERSION_UPDATER = "1.0.8"
 local SCRIPT_VERSION = SCRIPT_VERSION_UPDATER
 local SCRIPT_LAST_UPDATED = "08/18/2022"
 local SCRIPT_AUTHOR = "Orietto"
@@ -56,68 +56,7 @@ local slots = {
     R = Enums.SpellSlots.R
 }
 
-local slotToString = {
-    [slots.Q] = "Q",
-    [slots.W] = "W",
-    [slots.E] = "E",
-    [slots.R] = "R"
-}
-
-local dmgTypes = {
-    Physical = Enums.DamageTypes.Physical,
-    Magical = Enums.DamageTypes.Magical,
-    True = Enums.DamageTypes.True,
-    Mixed = Enums.DamageTypes.Mixed
-}
-
-local damages = {
-    Passive = {
-        Base = {68, 72, 77, 82, 89, 96, 103, 112, 121, 131, 142, 154, 166, 180, 194, 208, 224, 240},
-        BonusAD = 0.75,
-        TotalAP = function(heroLevel)
-            if heroLevel >= 16 then
-                return 0.88
-            elseif heroLevel >= 11 then
-                return 0.77
-            elseif heroLevel >= 6 then
-                return 0.66
-            else
-                return 0.55
-            end
-        end,
-        Type = dmgTypes.Magical
-    },
-    Q = {
-        Base = {75, 105, 135, 165, 195},
-        TotalAP = 0.3,
-        Type = dmgTypes.Magical
-    },
-    E = {
-        Base = {15, 30, 45, 60, 75},
-        TotalAD = 0.5,
-        TotalAP = 0.25,
-        Type = dmgTypes.Magical
-    },
-    R = {
-        PhysDmg = function()
-            local me = Player
-            local base = 0.16
-
-            local baseAS = 0.658
-            local totalAS = baseAS + me.AttackSpeedMod
-
-            return (base + (totalAS * 0.128)) * me.BonusAD
-        end,
-        MagicDmg = function(spellLevel)
-            local me = Player
-            local base = {25, 37.5, 50}
-            local totalAP = 0.19
-
-            return base[spellLevel] + (totalAP * me.TotalAP)
-        end,
-        Type = dmgTypes.Mixed
-    }
-}
+local dmgTypes = Enums.DamageTypes
 
 local spells = {
     Q = Spell.Targeted({
@@ -836,80 +775,39 @@ function Katarina.GetRDaggersAmount(target)
     return 15
 end
 
-local slotToDamageTable = {
-    [slots.Q] = damages.Q,
-    [slots.E] = damages.E
-}
 function Katarina.GetPassiveDamage(target)
     local me = Player
 
-    local passive = damages.Passive
+    local passive = {
+        Base = {68, 72, 77, 82, 89, 96, 103, 112, 121, 131, 142, 154, 166, 180, 194, 208, 224, 240},
+        BonusAD = 0.75,
+        TotalAP = function(heroLevel)
+            if heroLevel >= 16 then
+                return 0.88
+            elseif heroLevel >= 11 then
+                return 0.77
+            elseif heroLevel >= 6 then
+                return 0.66
+            else
+                return 0.55
+            end
+        end,
+        Type = dmgTypes.Magical
+    }
     local heroLevel = me.Level
-
     local rawDamage = passive.Base[min(18, heroLevel)] + (passive.BonusAD * me.BonusAD) + (passive.TotalAP(heroLevel) * me.TotalAP)
 
     return DmgLib.CalculateMagicalDamage(me, target, rawDamage)
 end
 
 function Katarina.GetSpellDamage(target, slot)
-    if slot == slots.R then
-        ERROR("GetSpellDamage called with R slot, use GetRDamage instead")
-    end
-
-    local me = Player
-
-    local rawDamage = 0
-    local dmgType = nil
-
-    local spellLevel = me:GetSpell(slot).Level
-
-    if spellLevel >= 1 then
-        local data = slotToDamageTable[slot]
-        
-        if data then
-            dmgType = data.Type
-            
-            rawDamage = rawDamage + data.Base[spellLevel]
-            
-            if data.TotalAD then
-                rawDamage = rawDamage + (data.TotalAD * me.TotalAD)
-            end
-            
-            if data.TotalAP then
-                rawDamage = rawDamage + (data.TotalAP * me.TotalAP)
-            end
-            
-            if dmgType == dmgTypes.Physical then
-                return DmgLib.CalculatePhysicalDamage(me, target, rawDamage)
-            elseif dmgType == dmgTypes.Magical then
-                return DmgLib.CalculateMagicalDamage(me, target, rawDamage)
-            else
-                return rawDamage
-            end
-        end
-    end
-
-    return 0
+    return DmgLib.GetSpellDamage(Player, target, slot)
 end
 
 ---@param target AIBaseClient
 ---@param daggersAmount number
 function Katarina.GetRDamage(target, daggersAmount)
-    daggersAmount = min(daggersAmount, 15)
-
-    local me = Player
-
-    local rData = damages.R
-    local spellLevel = me:GetSpell(slots.R).Level
-
-    local rawDamagePhys = rData.PhysDmg() * daggersAmount
-    local rawDamageMagic = rData.MagicDmg(spellLevel) * daggersAmount
-
-    local totalDamage = 0
-    totalDamage = totalDamage + DmgLib.CalculatePhysicalDamage(me, target, rawDamagePhys)
-    totalDamage = totalDamage + DmgLib.CalculateMagicalDamage(me, target, rawDamageMagic)    
-
-    return totalDamage
+    return DmgLib.GetSpellDamage(Player, target, slots.R) * min(daggersAmount, 15)
 end
 
 ---@param target AIHeroClient
