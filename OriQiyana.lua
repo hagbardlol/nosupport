@@ -1,7 +1,7 @@
 if Player.CharName ~= "Qiyana" then return end
 
 local SCRIPT_NAME = "Ori Qiyana"
-local SCRIPT_VERSION_UPDATER = "2.0.4"
+local SCRIPT_VERSION_UPDATER = "2.0.5"
 local SCRIPT_VERSION = SCRIPT_VERSION_UPDATER
 local SCRIPT_LAST_UPDATED = "08/18/2022"
 local SCRIPT_AUTHOR = "Orietto"
@@ -1961,8 +1961,8 @@ function Qiyana.InitMenu()
 
             Menu.Checkbox("Qiyana.ks.useR", "Enable R", true)
             Menu.Indent(function()
-                Menu.Checkbox("Qiyana.ks.useR.comboOnly", "Only during combo mode", true)
-                Menu.Dropdown("Qiyana.ks.useR.mode", "Mode", 1, {"Killable with just R", "Killable with combo"})
+                Menu.Checkbox("Qiyana.ks.useR.comboOnly", "Only during combo mode", false)
+                Menu.Dropdown("Qiyana.ks.useR.mode", "Mode", 0, {"Killable with just R", "Killable with combo"})
                 Menu.NewTree("Qiyana.ksMenu.R.whitelist", "KS R Whitelist", function()
                     local enemyHeroes = ObjManager.Get("enemy", "heroes")
 
