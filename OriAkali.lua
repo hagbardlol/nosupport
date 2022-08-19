@@ -1,7 +1,7 @@
 if Player.CharName ~= "Akali" then return end
 
 local SCRIPT_NAME = "Ori Akali"
-local SCRIPT_VERSION_UPDATER = "1.0.6"
+local SCRIPT_VERSION_UPDATER = "1.0.7"
 local SCRIPT_VERSION = SCRIPT_VERSION_UPDATER
 local SCRIPT_LAST_UPDATED = "08/18/2022"
 local SCRIPT_AUTHOR = "Orietto"
@@ -1537,10 +1537,10 @@ function Akali.InitMenu()
 
                 WHeader()
 
-                Menu.Checkbox("Akali.combo.useW", "Enable W", false)
+                Menu.Checkbox("Akali.combo.useW", "Enable W", true)
                 Menu.Indent(function()
                     Menu.Slider("Akali.combo.useW.minEnergy", "If my energy is below X", 120, 0, 200, 1)
-                    Menu.Dropdown("Akali.combo.useW.dir", "Use towards", 0, {"Mouse", "Target"})
+                    Menu.Dropdown("Akali.combo.useW.dir", "Use towards", 1, {"Mouse", "Target"})
                 end)
             end)
 
