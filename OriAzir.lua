@@ -1,7 +1,7 @@
 if Player.CharName ~= "Azir" then return end
 
 local SCRIPT_NAME = "Ori Azir"
-local SCRIPT_VERSION_UPDATER = "1.1.4"
+local SCRIPT_VERSION_UPDATER = "1.1.5"
 local SCRIPT_VERSION = SCRIPT_VERSION_UPDATER
 local SCRIPT_LAST_UPDATED = "08/18/2022"
 local SCRIPT_AUTHOR = "Orietto"
@@ -56,42 +56,7 @@ local slots = {
     R = Enums.SpellSlots.R
 }
 
-local slotToString = {
-    [slots.Q] = "Q",
-    [slots.W] = "W",
-    [slots.E] = "E",
-    [slots.R] = "R"
-}
-
-local dmgTypes = {
-    Physical = Enums.DamageTypes.Physical,
-    Magical = Enums.DamageTypes.Magical,
-    True = Enums.DamageTypes.True,
-    Mixed = Enums.DamageTypes.Mixed
-}
-
-local damages = {
-    Q = {
-        Base = {70, 90, 110, 130, 150},
-        TotalAP = 0.3,
-        Type = dmgTypes.Magical
-    },
-    W = {
-        HeroLevel = {50, 52, 54, 56, 58, 60, 62, 65, 70, 75, 80, 90, 100, 110, 120, 130, 140, 150},
-        TotalAP = 0.6,
-        Type = dmgTypes.Magical
-    },
-    E = {
-        Base = {60, 90, 120, 150, 180},
-        TotalAP = 0.4,
-        Type = dmgTypes.Magical
-    },
-    R = {
-        Base = {175, 325, 475},
-        TotalAP = 0.6,
-        Type = dmgTypes.Magical
-    }
-}
+local dmgTypes = Enums.DamageTypes
 
 local spells = {
     Q = Spell.Skillshot({
@@ -118,7 +83,7 @@ local spells = {
         BackRange = 275, --300
         FrontRange = 400,
         Delay = 0.25,
-        Speed = 1000,
+        Speed = 1400,
         Radius = 600 / 2,
         Type = "Linear"
     }),
@@ -128,7 +93,7 @@ local spells = {
         BackRange = 220,
         FrontRange = 350,
         Delay = 0.25,
-        Speed = 1000,
+        Speed = 1400,
         Radius = 400 / 2,
         Type = "Linear"
     }),
@@ -996,52 +961,9 @@ function Azir.GetFirstSoldierPrediction(target, soldiers)
     return nil
 end
 
-local slotToDamageTable = {
-    [slots.Q] = damages.Q,
-    [slots.W] = damages.W,
-    [slots.E] = damages.E,
-    [slots.R] = damages.R
-}
-
 ---@param target AIBaseClient
 function Azir.GetSpellDamage(target, slot)
-    local me = Player
-
-    local rawDamage = 0
-    local dmgType = nil
-
-    local spellLevel = me:GetSpell(slot).Level
-    local heroLevel = min(18, me.Level)
-
-    if spellLevel >= 1 then
-        local data = slotToDamageTable[slot]
-
-        if data then
-            dmgType = data.Type
-
-            if data.Base then
-                rawDamage = rawDamage + data.Base[spellLevel]
-            end
-
-            if data.HeroLevel then
-                rawDamage = rawDamage + data.HeroLevel[heroLevel]
-            end
-
-            if data.TotalAP then
-                rawDamage = rawDamage + (me.TotalAP * data.TotalAP)
-            end
-
-            if dmgType == dmgTypes.Physical then
-                return DmgLib.CalculatePhysicalDamage(me, target, rawDamage)
-            elseif dmgType == dmgTypes.Magical then
-                return DmgLib.CalculateMagicalDamage(me, target, rawDamage)
-            else
-                return rawDamage
-            end
-        end
-    end
-
-    return 0
+    return DmgLib.GetSpellDamage(Player, target, slot)
 end
 
 ---@param target AIHeroClient

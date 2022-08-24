@@ -1,7 +1,7 @@
 if Player.CharName ~= "Graves" then return end
 
 local SCRIPT_NAME = "Ori Graves"
-local SCRIPT_VERSION_UPDATER = "1.0.5"
+local SCRIPT_VERSION_UPDATER = "1.0.6"
 local SCRIPT_VERSION = SCRIPT_VERSION_UPDATER
 local SCRIPT_LAST_UPDATED = "08/18/2022"
 local SCRIPT_AUTHOR = "Orietto"
@@ -54,34 +54,7 @@ local slots = {
     R = Enums.SpellSlots.R
 }
 
-local dmgTypes = {
-    Physical = Enums.DamageTypes.Physical,
-    Magical = Enums.DamageTypes.Magical,
-    True = Enums.DamageTypes.True
-}
-
-local damages = {
-    Q = {
-        Base = {45, 60, 75, 90, 105},
-        BonusAD = 0.8,
-        Type = dmgTypes.Physical
-    },
-    Q2 = {
-        Base = {85, 120, 155, 190, 225},
-        BonusAD = {0.4, 0.7, 1, 1.3, 1.6},
-        Type = dmgTypes.Physical
-    },
-    W = {
-        Base = {60, 110, 160, 210, 260},
-        TotalAP = 0.6,
-        Type = dmgTypes.Magical
-    },
-    R = {
-        Base = {250, 400, 550},
-        BonusAD = 1.5,
-        Type = dmgTypes.Physical
-    }
-}
+local dmgTypes = Enums.DamageTypes
 
 local spells = {
     Q = Spell.Skillshot({
@@ -414,46 +387,9 @@ function Graves.GetHitchance(slot)
     return hc
 end
 
-local slotToDamageTable = {
-    [slots.Q] = damages.Q,
-    [slots.W] = damages.W,
-    [slots.E] = damages.E,
-    [slots.R] = damages.R
-}
-
 ---@param target AIBaseClient
 function Graves.GetDamage(target, slot)
-    local me = Player
-
-    local rawDamage = 0
-    local dmgType = nil
-
-    local spellLevel = me:GetSpell(slot).Level
-
-    local data = slotToDamageTable[slot]
-
-    if data then
-        dmgType = data.Type
-        rawDamage = data.Base[spellLevel]
-
-        if data.BonusAD then
-            rawDamage = rawDamage + (data.BonusAD * me.BonusAD)
-        end
-
-        if data.TotalAP then
-            rawDamage = rawDamage + (data.TotalAP * me.TotalAP)
-        end
-
-        if dmgType == Enums.DamageTypes.Physical then
-            return DmgLib.CalculatePhysicalDamage(me, target, rawDamage)
-        elseif dmgType == Enums.DamageTypes.Magical then
-            return DmgLib.CalculateMagicalDamage(me, target, rawDamage)
-        else
-            return rawDamage
-        end
-    end
-
-    return 0
+    return DmgLib.GetSpellDamage(Player, target, slot)
 end
 
 function fightModes.Killsteal(lagFree)

@@ -1,7 +1,7 @@
 if Player.CharName ~= "Yasuo" then return end
 
 local SCRIPT_NAME = "Ori Yasuo"
-local SCRIPT_VERSION_UPDATER = "2.2.5"
+local SCRIPT_VERSION_UPDATER = "2.2.6"
 local SCRIPT_VERSION = SCRIPT_VERSION_UPDATER
 local SCRIPT_LAST_UPDATED = "08/18/2022"
 local SCRIPT_AUTHOR = "Orietto"
@@ -61,30 +61,7 @@ local slotToString = {
     [slots.R] = "R"
 }
 
-local dmgTypes = {
-    Physical = Enums.DamageTypes.Physical,
-    Magical = Enums.DamageTypes.Magical,
-    True = Enums.DamageTypes.True
-}
-
-local damages = {
-    Q = {
-        Base = {20, 45, 70, 95, 120},
-        TotalAD = 1.0,
-        Type = dmgTypes.Physical
-    },
-    E = {
-        Base = {60, 70, 80, 90, 100},
-        BonusAD = 0.2,
-        TotalAP = 0.6,
-        Type = dmgTypes.Magical
-    },
-    R = {
-        Base = {200, 300, 400},
-        BonusAD = 1.5,
-        Type = dmgTypes.Physical
-    }
-}
+local dmgTypes = Enums.DamageTypes
 
 local spells = {
     Q1 = Spell.Skillshot({
@@ -92,17 +69,19 @@ local spells = {
         Delay = 0.4,
         Speed = huge,
         Range = 475,
-        Radius = 45 / 2,
-        Type = "Linear"
+        Radius = 40,
+        Type = "Linear",
+        UseHitbox = true
     }),
     Q3 = Spell.Skillshot({
         Slot = slots.Q,
         Delay = 0.4,
         Speed = 1200,
         Range = 1050,
-        Radius = 90 / 2,
+        Radius = 90,
         Type = "Linear",
-        Collisions = {Heroes = false, Minions = false, WindWall = true}
+        Collisions = {Heroes = false, Minions = false, WindWall = true},
+        UseHitbox = true
     }),
     QCircle = {
         Radius = 220,
@@ -159,6 +138,15 @@ local OriUtils = {}
 OriUtils.MiscData = {}
 
 OriUtils.MiscData.Champions = {}
+
+OriUtils.MiscData.Champions.HasRangedForm = {
+	["Nidalee"] = true, 
+    ["Jayce"] = true, 
+    ["Elise"] = true, 
+    ["Gnar"] = true, 
+    ["Kayle"] = true, 
+    ["Neeko"] = true,
+}
 
 OriUtils.MiscData.Champions.NoProjectileRanged = {
     ["Azir"] = true,
@@ -760,47 +748,8 @@ function Yasuo.GetQDelay()
     return 0.4 * (1 - (0.01 * min(bonusASPercent, 111.1) / 1.67))
 end
 
-local slotToDamageTable = {
-    [slots.Q] = damages.Q,
-    [slots.E] = damages.E,
-    [slots.R] = damages.R
-}
 function Yasuo.GetDamage(target, slot)
-    local me = Player
-
-    local rawDamage = 0
-    local dmgType = nil
-
-    local spellLevel = me:GetSpell(slot).Level
-
-    local data = slotToDamageTable[slot]
-
-    if data then
-        dmgType = data.Type
-        rawDamage = data.Base[spellLevel]
-
-        if data.TotalAD then
-            rawDamage = rawDamage + (data.TotalAD * me.TotalAD)
-        end
-
-        if data.BonusAD then
-            rawDamage = rawDamage + (data.BonusAD * me.BonusAD)
-        end
-
-        if data.TotalAP then
-            rawDamage = rawDamage + (data.TotalAP * me.TotalAP)
-        end
-
-        if dmgType == Enums.DamageTypes.Physical then
-            return DmgLib.CalculatePhysicalDamage(me, target, rawDamage)
-        elseif dmgType == Enums.DamageTypes.Magical then
-            return DmgLib.CalculateMagicalDamage(me, target, rawDamage)
-        else
-            return rawDamage
-        end
-    end
-
-    return 0
+    return DmgLib.GetSpellDamage(Player, target, slot)
 end
 
 function Yasuo.HasQ3()
@@ -2058,7 +2007,7 @@ function events.OnCreateObject(obj)
         local hero = caster.AsHero
         local charName = hero.CharName
         
-        local whitelistValue = OriUtils.MGet("blockAA." .. charName)
+        local whitelistValue = OriUtils.MGet("blockAA." .. charName, true)
         
         if whitelistValue then
             if Yasuo.CastW(hero.ServerPos) then
@@ -2380,13 +2329,14 @@ function Yasuo.InitMenu()
                     local enemyHeroes = ObjManager.Get("enemy", "heroes")
 
                     local addedWL = {}
+                    local override = OriUtils.MiscData.Champions.HasRangedForm
                     local checkAgainst = OriUtils.MiscData.Champions.NoProjectileRanged
 
                     for _, obj in pairs(enemyHeroes) do
                         local hero = obj.AsHero
                         local charName = hero.CharName
 
-                        if hero and hero.IsRanged and not checkAgainst[charName] and not addedWL[charName] then
+                        if hero and (override[charName] or hero.IsRanged) and not checkAgainst[charName] and not addedWL[charName] then
                             Menu.Checkbox("Yasuo.blockAA." .. charName, "Block " .. charName .. "'s AAs", true)
 
                             addedWL[charName] = true

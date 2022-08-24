@@ -1,7 +1,7 @@
 if Player.CharName ~= "Akali" then return end
 
 local SCRIPT_NAME = "Ori Akali"
-local SCRIPT_VERSION_UPDATER = "1.0.7"
+local SCRIPT_VERSION_UPDATER = "1.0.8"
 local SCRIPT_VERSION = SCRIPT_VERSION_UPDATER
 local SCRIPT_LAST_UPDATED = "08/18/2022"
 local SCRIPT_AUTHOR = "Orietto"
@@ -56,60 +56,7 @@ local slots = {
     R = Enums.SpellSlots.R
 }
 
-local dmgTypes = {
-    Physical = Enums.DamageTypes.Physical,
-    Magical = Enums.DamageTypes.Magical,
-    True = Enums.DamageTypes.True
-}
-
-local damages = {
-    Passive = {
-        Base = {29, 32, 35, 38, 41, 44, 47, 50, 59, 68, 77, 86, 95, 110, 125, 140, 155, 170},
-        BonusAD = 0.6,
-        TotalAP = 0.4,
-        Type = dmgTypes.Magical
-    },
-    Q = {
-        Base = {30, 55, 80, 105, 130},
-        TotalAD = 0.65,
-        TotalAP = 0.6,
-        Type = dmgTypes.Magical
-    },
-    E1 = {
-        Base = {30, 56.25, 82.5, 108.75, 135},
-        TotalAD = 0.255,
-        TotalAP = 0.36,
-        Type = dmgTypes.Magical
-    },
-    E2 = {
-        Base = {70, 131.25, 192.5, 253.75, 315},
-        TotalAD = 0.595,
-        TotalAP = 0.84,
-        Type = dmgTypes.Magical
-    },
-    R1 = {
-        Base = {80, 220, 360},
-        BonusAD = 0.5,
-        TotalAP = 0.3,
-        Type = dmgTypes.Magical
-    },
-    R2 = {
-        Base = {60, 130, 200},
-        TotalAP = 0.3,
-        ---@param baseDamage number
-        ---@param target AIBaseClient
-        ---@param simulatedHealth number|nil
-        MissingHealth = function(baseDamage, target, simulatedHealth)
-            local curHP = simulatedHealth or target.Health
-            local missingHealthPercent = 1 - (curHP / target.MaxHealth)
-
-            local increasePercent = min(2, missingHealthPercent * 2.86)
-
-            return baseDamage * increasePercent
-        end,
-        Type = dmgTypes.Magical
-    }
-}
+local dmgTypes = Enums.DamageTypes
 
 local spells = {
     Q = Spell.Skillshot({
@@ -117,7 +64,7 @@ local spells = {
         Delay = 0.25,
         Speed = huge,
         Range = 520,
-        Radius = 100 / 2,
+        Radius = 80,
         Type = "Linear",
         AngleRad = 35 * (pi/180)
     }),
@@ -133,10 +80,11 @@ local spells = {
         Slot = slots.E,
         Delay = 0.25,
         Speed = 1800,
-        Range = 750,
-        Radius = 80 / 2,
+        Range = 800,
+        Radius = 70,
         Type = "Linear",
-        Collisions = {Heroes = true, Minions = true, WindWall = true}
+        Collisions = {Heroes = true, Minions = true, WindWall = true},
+        UseHitbox = true
     }),
     E2 = Spell.Active({
         Slot = slots.E,
@@ -151,8 +99,9 @@ local spells = {
         Delay = 0,
         Speed = 3000,
         Range = 730,
-        Radius = 180 / 2,
-        Type = "Linear"
+        Radius = 65,
+        Type = "Linear",
+        UseHitbox = true
     }),
     Ignite = {
         Slot = nil,
@@ -626,63 +575,8 @@ function Akali.HasR2()
     return Player:GetSpell(slots.R).Name == "AkaliRb"
 end
 
-local slotToDamageTable = {
-    [slots.Q] = function(isPartTwo) return damages.Q end,
-    [slots.E] = function(isPartTwo) if isPartTwo then return damages.E2 else return damages.E1 end end,
-    [slots.R] = function(isPartTwo) if isPartTwo then return damages.R2 else return damages.R1 end end,
-}
-
-function Akali.GetPassiveDamage(target)
-    local me = Player
-
-    local passive = damages.Passive
-
-    local rawDamage = passive.Base[min(18, me.Level)] + (passive.BonusAD * me.BonusAD) + (passive.TotalAP * me.TotalAP)
-
-    return DmgLib.CalculateMagicalDamage(me, target, rawDamage)
-end
-
 function Akali.GetSpellDamage(target, slot, isPartTwo, simulatedHealth)
-    local me = Player
-
-    local rawDamage = 0
-    local dmgType = nil
-
-    local spellLevel = me:GetSpell(slot).Level
-
-    local data = slotToDamageTable[slot]
-    if data then
-        data = data(isPartTwo)
-
-        dmgType = data.Type
-        rawDamage = data.Base[spellLevel]
-
-        if data.BonusAD then
-            rawDamage = rawDamage + (data.BonusAD * me.BonusAD)
-        end
-
-        if data.TotalAD then
-            rawDamage = rawDamage + (data.TotalAD * me.TotalAD)
-        end
-
-        if data.TotalAP then
-            rawDamage = rawDamage + (data.TotalAP * me.TotalAP)
-        end
-
-        if data.MissingHealth then
-            rawDamage = rawDamage + data.MissingHealth(rawDamage, target, simulatedHealth)
-        end
-
-        if dmgType == dmgTypes.Physical then
-            return DmgLib.CalculatePhysicalDamage(me, target, rawDamage)
-        elseif dmgType == dmgTypes.Magical then
-            return DmgLib.CalculateMagicalDamage(me, target, rawDamage)
-        else
-            return rawDamage
-        end
-    end
-
-    return 0
+    return DmgLib.GetSpellDamage(Player, target, slot, isPartTwo and "SecondCast" or "Default")
 end
 
 ---@param target AIHeroClient
@@ -1378,32 +1272,12 @@ function events.OnDrawDamage(target, dmgList)
 
     damageToDeal = damageToDeal + DmgLib.GetAutoAttackDamage(me, target, true)
 
-    if useElectrocute then
-        damageToDeal = damageToDeal + OriUtils.GetElectrocuteDamage(target)
-    end
-
-    if useQ then
-        damageToDeal = damageToDeal + Akali.GetSpellDamage(target, slots.Q)
-    end
-
-    if useE1 then
-        damageToDeal = damageToDeal + Akali.GetSpellDamage(target, slots.E, false)
-    end
-
-    if useE2 then
-        damageToDeal = damageToDeal + Akali.GetSpellDamage(target, slots.E, true)
-    end
-
-    if useR1 then
-        damageToDeal = damageToDeal + Akali.GetSpellDamage(target, slots.R, false)
-    end
-
-    if useR2 then
-        local fullHealth = target.Health + target.ShieldAll
-        local tempHealth = max(0, fullHealth - damageToDeal)
-
-        damageToDeal = damageToDeal + Akali.GetSpellDamage(target, slots.R, true, tempHealth)
-    end
+    if useElectrocute then damageToDeal = damageToDeal + OriUtils.GetElectrocuteDamage(target) end
+    if useQ then damageToDeal = damageToDeal + Akali.GetSpellDamage(target, slots.Q) end
+    if useE1 then damageToDeal = damageToDeal + Akali.GetSpellDamage(target, slots.E, false) end
+    if useE2 then damageToDeal = damageToDeal + Akali.GetSpellDamage(target, slots.E, true) end
+    if useR1 then damageToDeal = damageToDeal + Akali.GetSpellDamage(target, slots.R, false) end
+    if useR2 then damageToDeal = damageToDeal + Akali.GetSpellDamage(target, slots.R, true) end
 
     insert(dmgList, damageToDeal)
 end
